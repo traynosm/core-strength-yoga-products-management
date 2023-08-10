@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\core-strength-yoga-products-management.props" />
+</Project>
