@@ -16,7 +16,7 @@ namespace core_strength_yoga_products_management.Controllers
         public async Task <ActionResult> Index()
         {
             var products = await _productService.GetProducts();
-            return View();
+            return View(products);
         }
 
         // GET: ProductController/Details/5

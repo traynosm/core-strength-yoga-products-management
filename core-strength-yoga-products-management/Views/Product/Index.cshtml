@@ -1,7 +1,36 @@
-﻿@{
-    ViewData["Title"] = "Product Page";
-}
+﻿@model IEnumerable<core_strength_yoga_products_management.Models.Product>;
 
-<div>
-    Hello
-</div>
+<h5></h5>
+<table class="table mb-3">
+    <tbody>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Name)
+            </th>
+            <th>
+                Available In (Gender | Size | Colour | Stock Level)
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="/Product?ProductId=@item.Id">@item.Id</a>
+                </td>
+                <td>
+                    <a href="/Product?ProductId=@item.Id">@item.Name</a>
+                </td>
+                <td>
+                @foreach (var attr in item.ProductAttributes)
+                {
+                        <p>@attr.Gender | @attr.Size | @attr.Colour | @attr.StockLevel</p>
+                }
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>
