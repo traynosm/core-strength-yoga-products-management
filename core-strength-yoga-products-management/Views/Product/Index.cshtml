@@ -1,27 +1,57 @@
 ﻿@model IEnumerable<core_strength_yoga_products_management.Models.Product>;
 
-<h5></h5>
+    @{
+        IEnumerable<ProductCategory> categories = ViewData["categories"] as IEnumerable<ProductCategory>;
+    }
+
+<div>
+    <form asp-controller="Product" asp-action="GetByCategory" method="get">
+        <label for="">Choose a cat:</label>
+        <select id="@nameof(Product.ProductCategory)" name="productCategoryId">
+            @foreach (var cat in categories!)
+            {
+              <option value="@cat.Id">@cat.ProductCategoryName</option>
+            }
+        </select>
+        <input type="submit">
+    </form>
+@*    <p>
+        <label for="@nameof(Product.ProductCategory)">Product Category</label>
+        <input type="number" id="@nameof(Product.ProductCategory)" name="@nameof(Product.ProductCategory)" min="1" max="5" value="1" />
+    </p>
+*@</div>
+
+<h5>Table of Products</h5>
 <table class="table mb-3">
     <tbody>
         <tr>
             <th>
-                @Html.DisplayNameFor(m => m.Id)
+                @Html.DisplayNameFor(m => m.ProductCategory)
             </th>
+            <th>
+                @Html.DisplayNameFor(m => m.ProductType)
+            </th>
+
             <th>
                 @Html.DisplayNameFor(m => m.Name)
             </th>
+
+
             <th>
-                Available In (Gender | Size | Colour | Stock Level)
+                Gender | Size | Colour | Stock Level
             </th>
         </tr>
         @foreach (var item in Model)
         {
             <tr>
                 <td>
-                    <a href="/Product?ProductId=@item.Id">@item.Id</a>
+                    @item.ProductCategory.ProductCategoryName
                 </td>
                 <td>
-                    <a href="/Product?ProductId=@item.Id">@item.Name</a>
+                    @item.ProductType.ProductTypeName
+                </td>
+                <td>
+                    <a href="Product/ProductById/@item.Id">@item.Name</a>
                 </td>
                 <td>
                 @foreach (var attr in item.ProductAttributes)
@@ -29,8 +59,23 @@
                         <p>@attr.Gender | @attr.Size | @attr.Colour | @attr.StockLevel</p>
                 }
                 </td>
+                <td>
+                    <a asp-action="DeleteProduct" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
+                        Delete
+                        <i class="fa-solid fa-trash fa-fw"></i>
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="ProductById" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
+                        Edit
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+                </td>
                 
             </tr>
         }
     </tbody>
 </table>
+<form>
+
+</form>

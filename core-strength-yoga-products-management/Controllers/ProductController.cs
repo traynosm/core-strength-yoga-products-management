@@ -1,6 +1,8 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
+using core_strength_yoga_products_management.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace core_strength_yoga_products_management.Controllers
 {
@@ -13,79 +15,79 @@ namespace core_strength_yoga_products_management.Controllers
         }
 
         // GET: ProductController
-        public async Task <ActionResult> Index()
+        public async Task<ActionResult> Index()
         {
+            var categories = await _productService.GetCategories();
+            ViewData["categories"] = categories;
+
             var products = await _productService.GetProducts();
             return View(products);
         }
 
-        // GET: ProductController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> GetCategory()
         {
-            return View();
+            var categories = await _productService.GetCategories();
+            return View(categories);
+        }
+        public async Task<IActionResult> GetType()
+        {
+            var types = await _productService.GetTypes();
+            return View(types);
+        }
+        public async Task<IActionResult> GetByCategory(int productCategoryId)
+        {
+            var productsByCategories = await _productService.GetByProductCategory(productCategoryId);
+            if (productsByCategories == null || !productsByCategories.Any())
+            {
+                return RedirectToAction("Index");
+            }
+            var categories = await _productService.GetCategories();
+            ViewData["categories"] = categories;
+
+            return View("Index", productsByCategories);
+        }
+        [HttpGet("Product/ProductById/{productId}")]
+        public async Task<IActionResult> ProductById(int productId)
+        {
+            var product = await _productService.GetProductById(productId);
+
+
+            var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
+
+            ViewData["selectListItemsCategories"] = selectListItemsCategories;
+
+            var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
+
+            ViewData["selectListItemsTypes"] = selectListItemsTypes;
+
+
+            return View(product);
+        }
+        public async Task<IActionResult> Update(Product product)
+        {
+            return View("ProductById", product);
         }
 
-        // GET: ProductController/Create
-        public ActionResult Create()
+        private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)
         {
-            return View();
+            var categories = await _productService.GetCategories();
+            var selectListItemsCategories = new List<SelectListItem>();
+            foreach (var item in categories)
+            {
+                selectListItemsCategories.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.ProductCategoryName, Selected = productCategoryId == item.Id });
+            }
+            return selectListItemsCategories;
         }
 
-        // POST: ProductController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        private async Task<List<SelectListItem>> BuildSelectItemsTypes(int productTypeId)
         {
-            try
+            var types = await _productService.GetTypes();
+            var selectListItemsTypes = new List<SelectListItem>();
+            foreach (var item in types)
             {
-                return RedirectToAction(nameof(Index));
+                selectListItemsTypes.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.ProductTypeName, Selected = productTypeId == item.Id });
             }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProductController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ProductController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProductController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProductController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return selectListItemsTypes;
         }
     }
 }
