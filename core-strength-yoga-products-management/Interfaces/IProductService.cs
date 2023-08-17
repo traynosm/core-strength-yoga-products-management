@@ -9,5 +9,7 @@ namespace core_strength_yoga_products_management.Interfaces
         Task<IEnumerable<ProductCategory>?> GetCategories();
         Task<IEnumerable<ProductType>?> GetTypes();
         Task<IEnumerable<Product>?> GetByProductCategory(int productCategoryId);
+        Task<IEnumerable<Product>?> GetByProductType(int productTypeId);
+
     }
 }

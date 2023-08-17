@@ -2,6 +2,8 @@
 
     @{
         IEnumerable<ProductCategory> categories = ViewData["categories"] as IEnumerable<ProductCategory>;
+        IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType>;
+
     }
 
 <div>
@@ -11,6 +13,16 @@
             @foreach (var cat in categories!)
             {
               <option value="@cat.Id">@cat.ProductCategoryName</option>
+            }
+        </select>
+        <input type="submit">
+    </form>
+    <form asp-controller="Product" asp-action="GetByType" method="get">
+        <label for="">Choose a type:</label>
+        <select id="@nameof(Product.ProductType)" name="productTypeId">
+            @foreach (var type in types!)
+            {
+                <option value="@type.Id">@type.ProductTypeName</option>
             }
         </select>
         <input type="submit">
@@ -66,7 +78,7 @@
                     </a>
                 </td>
                 <td>
-                    <a asp-action="ProductById" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
+                    <a asp-action="Edit" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
                         Edit
                         <i class="fa-regular fa-pen-to-square"></i>
                     </a>

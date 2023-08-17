@@ -403,3 +403,5 @@ FodyWeavers.xsd
 .vs/core-strength-yoga-products-management/DesignTimeBuild/.dtbcache.v2
 .vs/ProjectEvaluation/core-strength-yoga-products-management.metadata.v6.1
 .vs/ProjectEvaluation/core-strength-yoga-products-management.projects.v6.1
+*.dll
+*.pdb

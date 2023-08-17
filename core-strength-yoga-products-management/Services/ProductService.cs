@@ -36,6 +36,11 @@ namespace core_strength_yoga_products_management.Services
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<Product>>($"/api/v1/Products/ByCategory/{productCategoryId}");
         }
+        public async Task<IEnumerable<Product>?> GetByProductType(int productTypeId)
+        {
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Product>>($"/api/v1/Products/ByType/{productTypeId}");
+        }
+
 
         public async Task<Product> GetProductById(int productId)
         {

@@ -1,5 +1,6 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
+using core_strength_yoga_products_management.Models.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,6 +20,9 @@ namespace core_strength_yoga_products_management.Controllers
         {
             var categories = await _productService.GetCategories();
             ViewData["categories"] = categories;
+
+            var types = await _productService.GetTypes();
+            ViewData["types"] = types;
 
             var products = await _productService.GetProducts();
             return View(products);
@@ -46,8 +50,20 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View("Index", productsByCategories);
         }
-        [HttpGet("Product/ProductById/{productId}")]
-        public async Task<IActionResult> ProductById(int productId)
+        public async Task<IActionResult> GetByType(int productTypeId)
+        {
+            var productsByType = await _productService.GetByProductType(productTypeId);
+            if (productsByType == null || !productsByType.Any())
+            {
+                return RedirectToAction("Index");
+            }
+            var Types = await _productService.GetTypes();
+            ViewData["categories"] = Types;
+
+            return View("Index", productsByType);
+        }
+        [HttpGet("Product/Edit/{productId}")]
+        public async Task<IActionResult> Edit(int productId)
         {
             var product = await _productService.GetProductById(productId);
 
@@ -60,12 +76,15 @@ namespace core_strength_yoga_products_management.Controllers
 
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
-
             return View(product);
         }
         public async Task<IActionResult> Update(Product product)
         {
-            return View("ProductById", product);
+            return View("Edit", product);
+        }
+        public async Task<IActionResult> UpdateProductAttribute(ProductAttributes productAttribute)
+        {
+            return View("ProductAttributeById", productAttribute);
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)
@@ -89,5 +108,49 @@ namespace core_strength_yoga_products_management.Controllers
             }
             return selectListItemsTypes;
         }
+        public static List<SelectListItem> BuildSelectItemsGender(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Gender)))
+            {
+               selectListItems.Add(new SelectListItem 
+               { 
+                   Value = ((int)item).ToString(), 
+                   Text = item.ToString(), 
+                   Selected = id == (int)item 
+               });
+            }
+            return selectListItems;
+        }
+
+        public static List<SelectListItem> BuildSelectItemsSize(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Size)))
+            {
+                selectListItems.Add(new SelectListItem 
+                { 
+                    Value = ((int)item).ToString(), 
+                    Text = item.ToString(), 
+                    Selected = id == (int)item
+                });
+            }
+            return selectListItems;
+        }
+        public static List<SelectListItem> BuildSelectItemsColour(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Colour)))
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Value = ((int)item).ToString(),
+                    Text = item.ToString(),
+                    Selected = id == (int)item
+                });
+            }
+            return selectListItems;
+        }
+
     }
 }
