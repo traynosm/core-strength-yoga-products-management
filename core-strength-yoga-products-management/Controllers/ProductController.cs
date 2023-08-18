@@ -62,6 +62,25 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View("Index", productsByType);
         }
+        public async Task<IActionResult> Add()
+        {
+            var selectListItemsCategories = await BuildSelectItemsCategories(0);
+
+            ViewData["selectListItemsCategories"] = selectListItemsCategories;
+
+            var selectListItemsTypes = await BuildSelectItemsTypes(0);
+
+            ViewData["selectListItemsTypes"] = selectListItemsTypes;
+
+            return View(new Product());
+        }
+
+        [HttpGet("Product/ProductAttributePartialView")]
+        public async Task<IActionResult> ProductAttributePartialView()
+        {
+            return View("ProductAttribute", new ProductAttributes());
+        }
+
         [HttpGet("Product/Edit/{productId}")]
         public async Task<IActionResult> Edit(int productId)
         {
@@ -82,9 +101,10 @@ namespace core_strength_yoga_products_management.Controllers
         {
             return View("Edit", product);
         }
+
         public async Task<IActionResult> UpdateProductAttribute(ProductAttributes productAttribute)
         {
-            return View("ProductAttributeById", productAttribute);
+            return View("", productAttribute);
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)

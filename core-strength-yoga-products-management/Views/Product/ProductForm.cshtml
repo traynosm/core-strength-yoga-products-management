@@ -1,0 +1,54 @@
+﻿@model core_strength_yoga_products_management.Models.Product
+
+@{
+    IEnumerable<SelectListItem> categories = ViewData["selectListItemsCategories"] as IEnumerable<SelectListItem>;
+    IEnumerable<SelectListItem> types = ViewData["selectListItemsTypes"] as IEnumerable<SelectListItem>;
+}
+
+@using (Html.BeginForm("Edit", "Product", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new{@class = "form-control"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProductCategory)
+        @Html.DropDownListFor(m => m.ProductCategory.Id, categories, new{@class = "form-control"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProductType)
+        @Html.DropDownListFor(m => m.ProductType.Id, types, new{@class = "form-control"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description)
+        @Html.TextBoxFor(m => m.Description, new{@class = "form-control"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.FullPrice)
+        @Html.TextBoxFor(m => m.FullPrice, new{@class = "form-control"})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Image)
+        @Html.TextBoxFor(m => m.Image.ImageName, new{@class = "form-control"})
+    </div>
+
+    <div>
+        <button type="submit" , class="btn btn-primary">Update <i class="fa-regular fa-floppy-disk"></i></button>
+    </div>
+}
+@if (Model.ProductAttributes != null)
+{
+    @foreach (var attr in Model.ProductAttributes)
+    {
+        @await Html.PartialAsync("ProductAttribute", attr)
+    }
+}
+<button id="add-new-attr" class="btn btn-success">Add New Attribute</button>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#add-new-attr").click(function() {
+            alert('clicked');
+        });
+    });
+</script>

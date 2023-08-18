@@ -5,6 +5,7 @@
         IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType>;
 
     }
+    <a href="/Product/Add" class="btn btn-success">Add</a>
 
 <div>
     <form asp-controller="Product" asp-action="GetByCategory" method="get">
@@ -27,11 +28,7 @@
         </select>
         <input type="submit">
     </form>
-@*    <p>
-        <label for="@nameof(Product.ProductCategory)">Product Category</label>
-        <input type="number" id="@nameof(Product.ProductCategory)" name="@nameof(Product.ProductCategory)" min="1" max="5" value="1" />
-    </p>
-*@</div>
+</div>
 
 <h5>Table of Products</h5>
 <table class="table mb-3">
