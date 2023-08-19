@@ -4,6 +4,8 @@ using core_strength_yoga_products_management.Models.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
+using ProductCategory = core_strength_yoga_products_management.Models.ProductCategory;
 
 namespace core_strength_yoga_products_management.Controllers
 {
@@ -78,14 +80,13 @@ namespace core_strength_yoga_products_management.Controllers
         [HttpGet("Product/ProductAttributePartialView")]
         public async Task<IActionResult> ProductAttributePartialView()
         {
-            return View("ProductAttribute", new ProductAttributes());
+            return PartialView("ProductAttribute", new ProductAttributes());
         }
 
         [HttpGet("Product/Edit/{productId}")]
         public async Task<IActionResult> Edit(int productId)
         {
             var product = await _productService.GetProductById(productId);
-
 
             var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
 
@@ -97,14 +98,66 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View(product);
         }
-        public async Task<IActionResult> Update(Product product)
+        public async Task<IActionResult> Update(IFormCollection form)
         {
-            return View("Edit", product);
+            var susansProduct = new Product();
+            susansProduct.ProductCategory = new ProductCategory();
+            susansProduct.ProductType = new Models.ProductType();
+            susansProduct.ProductAttributes = new List<ProductAttributes>();
+
+            susansProduct.Name = form["Name"];
+            susansProduct.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
+            susansProduct.ProductType.Id = int.Parse(form["ProductType.Id"]);
+            susansProduct.Description = form["Description"];
+            susansProduct.Image = new Models.Image();
+            susansProduct.Image.ImageName = form["Image.ImageName"];
+
+            var formProductAttributes = ExtractProductAttributes(form);
+            var productAttributes = new List<ProductAttributes>();
+
+            foreach (var singleAttribute in formProductAttributes)
+            {
+                var productAttribute = new ProductAttributes();
+
+                var id = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Attribute.Id")).Value;
+                productAttribute.Id = int.Parse(id.ToString());
+
+                var gender = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Gender")).Value;
+                productAttribute.Gender = (Gender)Enum.Parse(typeof(Gender), gender.ToString());
+
+                var size = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Size")).Value;
+                productAttribute.Size = (Size)Enum.Parse(typeof(Size), size.ToString());
+
+                var colour = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Colour")).Value;
+                productAttribute.Colour = (Colour)Enum.Parse(typeof(Colour), colour.ToString());
+
+                var stockLevel = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("StockLevel")).Value;
+                productAttribute.StockLevel = int.Parse(stockLevel.ToString());
+
+                var priceAdj = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("PriceAdj")).Value;
+                productAttribute.PriceAdjustment = decimal.Parse(priceAdj.ToString());
+
+                productAttributes.Add(productAttribute);    
+            }
+
+            susansProduct.ProductAttributes = productAttributes;
+
+            //update in db backend
+
+            var selectListItemsCategories = await BuildSelectItemsCategories(susansProduct.ProductCategory.Id);
+             
+            ViewData["selectListItemsCategories"] = selectListItemsCategories;
+
+            var selectListItemsTypes = await BuildSelectItemsTypes(susansProduct.ProductType.Id);
+
+            ViewData["selectListItemsTypes"] = selectListItemsTypes;
+
+            return View("Edit", susansProduct);
         }
 
         public async Task<IActionResult> UpdateProductAttribute(ProductAttributes productAttribute)
         {
-            return View("", productAttribute);
+            return View("Edit", productAttribute);
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)
@@ -170,6 +223,30 @@ namespace core_strength_yoga_products_management.Controllers
                 });
             }
             return selectListItems;
+        }
+
+        private List<Dictionary<string, object>> ExtractProductAttributes(IFormCollection form)
+        {
+            var index = 0;
+            var productAttributes = new List<Dictionary<string, object>>();
+            var singleAttribute = new Dictionary<string, object>();
+            foreach (var val in form)
+            {
+                if (val.Key.Contains("Attr"))
+                {
+                    if (index > 0) productAttributes.Add(singleAttribute);
+                    index++;
+                    singleAttribute = new Dictionary<string, object>();
+                }
+
+                if (index > 0 && !val.Key.Contains("Token"))
+                {
+                    singleAttribute.Add(val.Key, val.Value);
+                }
+            }
+            productAttributes.Add(singleAttribute);
+
+            return productAttributes;
         }
 
     }

@@ -5,7 +5,7 @@
     IEnumerable<SelectListItem> types = ViewData["selectListItemsTypes"] as IEnumerable<SelectListItem>;
 }
 
-@using (Html.BeginForm("Edit", "Product", FormMethod.Post))
+@using (Html.BeginForm("Update", "Product", FormMethod.Post))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Name)
@@ -32,23 +32,23 @@
         @Html.TextBoxFor(m => m.Image.ImageName, new{@class = "form-control"})
     </div>
 
+    <div id="product-attributes">
+        <h6>Product Attributes</h6>
+        @if (Model.ProductAttributes != null)
+        {
+            @foreach (var attr in Model.ProductAttributes)
+            {
+                @await Html.PartialAsync("ProductAttribute", attr)
+            }
+        }
+    </div>
+
     <div>
         <button type="submit" , class="btn btn-primary">Update <i class="fa-regular fa-floppy-disk"></i></button>
     </div>
 }
-@if (Model.ProductAttributes != null)
-{
-    @foreach (var attr in Model.ProductAttributes)
-    {
-        @await Html.PartialAsync("ProductAttribute", attr)
-    }
-}
+
 <button id="add-new-attr" class="btn btn-success">Add New Attribute</button>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#add-new-attr").click(function() {
-            alert('clicked');
-        });
-    });
-</script>
+
+

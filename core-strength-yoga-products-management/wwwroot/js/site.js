@@ -5,6 +5,16 @@
 
 $(document).ready(function () {
     $("#add-new-attr").click(function () {
-        alert('clicked');
+        $.ajax({
+            url: "/Product/ProductAttributePartialView",
+            type: 'GET',
+            success: function (res) {
+                $("#product-attributes").append(res);
+            },
+            error: function (err) {
+                console.log(err);
+                alert('failed');
+            }
+        });
     });
 });
