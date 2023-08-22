@@ -8,7 +8,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal FullPrice { get; set; }
-        public Image Image { get; set; }
+        public Image? Image { get; set; }
         public IEnumerable<ProductAttributes> ProductAttributes { get; set; }
     }
 }

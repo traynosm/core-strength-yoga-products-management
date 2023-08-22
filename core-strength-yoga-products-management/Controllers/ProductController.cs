@@ -1,7 +1,6 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Models.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
@@ -35,7 +34,7 @@ namespace core_strength_yoga_products_management.Controllers
             var categories = await _productService.GetCategories();
             return View(categories);
         }
-        public async Task<IActionResult> GetType()
+        public async Task<IActionResult> GetTypes()
         {
             var types = await _productService.GetTypes();
             return View(types);
@@ -67,18 +66,16 @@ namespace core_strength_yoga_products_management.Controllers
         public async Task<IActionResult> Add()
         {
             var selectListItemsCategories = await BuildSelectItemsCategories(0);
-
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
             var selectListItemsTypes = await BuildSelectItemsTypes(0);
-
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
             return View(new Product());
         }
 
         [HttpGet("Product/ProductAttributePartialView")]
-        public async Task<IActionResult> ProductAttributePartialView()
+        public IActionResult ProductAttributePartialView()
         {
             return PartialView("ProductAttribute", new ProductAttributes());
         }
@@ -89,95 +86,71 @@ namespace core_strength_yoga_products_management.Controllers
             var product = await _productService.GetProductById(productId);
 
             var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
-
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
             var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
-
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
             return View(product);
         }
-        public async Task<IActionResult> Update(IFormCollection form)
+        public async Task<IActionResult> AddOrUpdate(IFormCollection form)
         {
-            var susansProduct = new Product();
-            susansProduct.ProductCategory = new ProductCategory();
-            susansProduct.ProductType = new Models.ProductType();
-            susansProduct.ProductAttributes = new List<ProductAttributes>();
-
-            susansProduct.Name = form["Name"];
-            susansProduct.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
-            susansProduct.ProductType.Id = int.Parse(form["ProductType.Id"]);
-            susansProduct.Description = form["Description"];
-            susansProduct.Image = new Models.Image();
-            susansProduct.Image.ImageName = form["Image.ImageName"];
-
-            var formProductAttributes = ExtractProductAttributes(form);
-            var productAttributes = new List<ProductAttributes>();
-
-            foreach (var singleAttribute in formProductAttributes)
-            {
-                var productAttribute = new ProductAttributes();
-
-                var id = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Attribute.Id")).Value;
-                productAttribute.Id = int.Parse(id.ToString());
-
-                var gender = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Gender")).Value;
-                productAttribute.Gender = (Gender)Enum.Parse(typeof(Gender), gender.ToString());
-
-                var size = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Size")).Value;
-                productAttribute.Size = (Size)Enum.Parse(typeof(Size), size.ToString());
-
-                var colour = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Colour")).Value;
-                productAttribute.Colour = (Colour)Enum.Parse(typeof(Colour), colour.ToString());
-
-                var stockLevel = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("StockLevel")).Value;
-                productAttribute.StockLevel = int.Parse(stockLevel.ToString());
-
-                var priceAdj = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("PriceAdj")).Value;
-                productAttribute.PriceAdjustment = decimal.Parse(priceAdj.ToString());
-
-                productAttributes.Add(productAttribute);    
-            }
-
-            susansProduct.ProductAttributes = productAttributes;
-
+            var product = BuildProductFromFormCollection(form);
+            var updatedProduct = new Product();
             //update in db backend
+            if (product.Id == 0)
+            {
+                updatedProduct = await _productService.Add(product);
+            }
+            else
+            {
+                updatedProduct = await _productService.Update(product);
+            }
+            
 
-            var selectListItemsCategories = await BuildSelectItemsCategories(susansProduct.ProductCategory.Id);
-             
+            var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);       
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
-            var selectListItemsTypes = await BuildSelectItemsTypes(susansProduct.ProductType.Id);
-
+            var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
-            return View("Edit", susansProduct);
-        }
-
-        public async Task<IActionResult> UpdateProductAttribute(ProductAttributes productAttribute)
-        {
-            return View("Edit", productAttribute);
+            return View("Edit", updatedProduct);
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)
         {
-            var categories = await _productService.GetCategories();
+            var categories = await _productService.GetCategories() ?? 
+                throw new NullReferenceException($"GetCategories responded with null");
+
             var selectListItemsCategories = new List<SelectListItem>();
             foreach (var item in categories)
             {
-                selectListItemsCategories.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.ProductCategoryName, Selected = productCategoryId == item.Id });
+                selectListItemsCategories.Add(
+                    new SelectListItem 
+                    { 
+                        Value = item.Id.ToString(), 
+                        Text = item.ProductCategoryName, 
+                        Selected = productCategoryId == item.Id 
+                    });
             }
             return selectListItemsCategories;
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsTypes(int productTypeId)
         {
-            var types = await _productService.GetTypes();
+            var types = await _productService.GetTypes() ??
+                throw new NullReferenceException($"GetTypes responded with null"); 
+
             var selectListItemsTypes = new List<SelectListItem>();
             foreach (var item in types)
             {
-                selectListItemsTypes.Add(new SelectListItem { Value = item.Id.ToString(), Text = item.ProductTypeName, Selected = productTypeId == item.Id });
+                selectListItemsTypes.Add(
+                    new SelectListItem 
+                    { 
+                        Value = item.Id.ToString(), 
+                        Text = item.ProductTypeName, 
+                        Selected = productTypeId == item.Id 
+                    });
             }
             return selectListItemsTypes;
         }
@@ -225,7 +198,7 @@ namespace core_strength_yoga_products_management.Controllers
             return selectListItems;
         }
 
-        private List<Dictionary<string, object>> ExtractProductAttributes(IFormCollection form)
+        private static List<Dictionary<string, object>> ExtractProductAttributes(IFormCollection form)
         {
             var index = 0;
             var productAttributes = new List<Dictionary<string, object>>();
@@ -249,5 +222,54 @@ namespace core_strength_yoga_products_management.Controllers
             return productAttributes;
         }
 
+        private static Product BuildProductFromFormCollection(IFormCollection form)
+        {
+            var product = new Product();
+            product.ProductCategory = new ProductCategory();
+            product.ProductType = new Models.ProductType();
+            product.ProductAttributes = new List<ProductAttributes>();
+
+            int.TryParse(form["Image.Id"], out var imageId);
+
+            product.Id = int.Parse(form["Id"]);
+            product.Name = form["Name"];
+            product.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
+            product.ProductType.Id = int.Parse(form["ProductType.Id"]);
+            product.Description = form["Description"];
+            product.Image = new Image(imageId);
+            product.Image.ImageName = form["Image.ImageName"];
+
+            var formProductAttributes = ExtractProductAttributes(form);
+            var productAttributes = new List<ProductAttributes>();
+
+            foreach (var singleAttribute in formProductAttributes)
+            {
+                var productAttribute = new ProductAttributes();
+
+                var id = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Attribute.Id")).Value;
+                productAttribute.Id = int.Parse(id.ToString());
+
+                var gender = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Gender")).Value;
+                productAttribute.Gender = (Gender)Enum.Parse(typeof(Gender), gender.ToString());
+
+                var size = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Size")).Value;
+                productAttribute.Size = (Size)Enum.Parse(typeof(Size), size.ToString());
+
+                var colour = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("Colour")).Value;
+                productAttribute.Colour = (Colour)Enum.Parse(typeof(Colour), colour.ToString());
+
+                var stockLevel = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("StockLevel")).Value;
+                productAttribute.StockLevel = int.Parse(stockLevel.ToString());
+
+                var priceAdj = singleAttribute.FirstOrDefault(sa => sa.Key.Contains("PriceAdj")).Value;
+                productAttribute.PriceAdjustment = decimal.Parse(priceAdj.ToString());
+
+                productAttributes.Add(productAttribute);
+            }
+
+            product.ProductAttributes = productAttributes;
+
+            return product;
+        }
     }
 }

@@ -10,8 +10,8 @@
 <div class="m-5">
     <input type="hidden" name="ProductAttribute.Id-@Model.Id" id="ProductAttribute.Id-@Model.Id" value="@Model.Id" />
     <div class="form-group">
-        @Html.Label("Gender")
 
+        @Html.Label("Gender")
         <select name="Gender-@Model.Id" id="Gender-@Model.Id">
             @foreach(var gender in genderItems)
             {
@@ -25,8 +25,8 @@
                 }
             }
         </select>
-        @Html.Label("Size")
 
+        @Html.Label("Size")
         <select name="Size-@Model.Id" id="Size-@Model.Id">
             @foreach (var size in sizeItems)
             {
@@ -40,8 +40,8 @@
                 }
             }
         </select>
-        @Html.Label("Colour")
 
+        @Html.Label("Colour")
         <select name="Colour-@Model.Id" id="Colour-@Model.Id">
             @foreach (var colour in colourItems)
             {
@@ -55,12 +55,11 @@
                 }
             }
         </select>
-        @Html.Label("StockLevel")
 
+        @Html.Label("StockLevel")
         <input type="number" name="StockLevel-@Model.Id" id="StockLevel-@Model.Id" value="@Model.StockLevel" , min="0" , step="1.0"/>
 
         @Html.Label("PriceAdjustment")
-
         <input type="number" name="PriceAdjustment-@Model.Id" id="PriceAdjustment-@Model.Id" value="@Model.PriceAdjustment" , min="0" , step="0.01"/>
     </div>
 </div>

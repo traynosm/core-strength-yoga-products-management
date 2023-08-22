@@ -27,6 +27,14 @@ namespace core_strength_yoga_products_management
 
             builder.Services.AddDefaultIdentity<core_strength_yoga_products_managementUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<core_strength_yoga_products_managementContext>();
 
+            IdentityBuilder identityBuilder = builder.Services.AddIdentityCore<core_strength_yoga_products_managementUser>();
+
+            identityBuilder = new IdentityBuilder(identityBuilder.UserType, builder.Services);
+
+            identityBuilder.AddEntityFrameworkStores<core_strength_yoga_products_managementContext>();
+
+            identityBuilder.AddSignInManager<SignInManager<core_strength_yoga_products_managementUser>>();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient<IProductService, ProductService>();

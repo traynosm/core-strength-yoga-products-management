@@ -5,8 +5,9 @@
     IEnumerable<SelectListItem> types = ViewData["selectListItemsTypes"] as IEnumerable<SelectListItem>;
 }
 
-@using (Html.BeginForm("Update", "Product", FormMethod.Post))
+@using (Html.BeginForm("AddOrUpdate", "Product", FormMethod.Post))
 {
+    @Html.HiddenFor(m => m.Id);
     <div class="form-group">
         @Html.LabelFor(m => m.Name)
         @Html.TextBoxFor(m => m.Name, new{@class = "form-control"})
@@ -28,7 +29,8 @@
         @Html.TextBoxFor(m => m.FullPrice, new{@class = "form-control"})
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Image)
+        @Html.HiddenFor(m => m.Image.Id)
+        @Html.LabelFor(m => m.Image.ImageName)
         @Html.TextBoxFor(m => m.Image.ImageName, new{@class = "form-control"})
     </div>
 

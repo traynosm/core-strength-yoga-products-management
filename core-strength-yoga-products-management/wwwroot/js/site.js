@@ -9,12 +9,14 @@ $(document).ready(function () {
             url: "/Product/ProductAttributePartialView",
             type: 'GET',
             success: function (res) {
-                $("#product-attributes").append(res);
+                let html = '<div class="bg-success">' + res + '</div>'
+                $("#product-attributes").append(html);
             },
             error: function (err) {
                 console.log(err);
                 alert('failed');
             }
         });
+        $(this).hide();
     });
 });
