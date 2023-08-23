@@ -2,6 +2,10 @@
 {
     public class Product
     {
+        public Product() 
+        { 
+            Image = new Image(); 
+        }
         public int Id { get; set; }
         public ProductCategory ProductCategory { get; set; }
         public ProductType ProductType { get; set; }

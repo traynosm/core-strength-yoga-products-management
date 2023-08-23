@@ -12,7 +12,10 @@
     <div class="form-group">
 
         @Html.Label("Gender")
-        <select name="Gender-@Model.Id" id="Gender-@Model.Id">
+        @{
+            var disabledGender = Model.Id > 0 ? "disabled" : "";
+        }
+        <select name="Gender-@Model.Id" id="Gender-@Model.Id" @disabledGender >
             @foreach(var gender in genderItems)
             {
                 @if(gender.Selected)
@@ -27,7 +30,10 @@
         </select>
 
         @Html.Label("Size")
-        <select name="Size-@Model.Id" id="Size-@Model.Id">
+        @{
+            var disabledSize = Model.Id > 0 ? "disabled" : "";
+        }
+        <select name="Size-@Model.Id" id="Size-@Model.Id" @disabledSize>
             @foreach (var size in sizeItems)
             {
                 @if (size.Selected)
@@ -42,7 +48,10 @@
         </select>
 
         @Html.Label("Colour")
-        <select name="Colour-@Model.Id" id="Colour-@Model.Id">
+        @{
+            var disabledColour = Model.Id > 0 ? "disabled" : "";
+        }
+        <select name="Colour-@Model.Id" id="Colour-@Model.Id" @disabledColour>
             @foreach (var colour in colourItems)
             {
                 @if (colour.Selected)

@@ -11,9 +11,11 @@ namespace core_strength_yoga_products_management.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private IWebHostEnvironment _hostingEnvironment;
+        public ProductController(IProductService productService, IWebHostEnvironment hostingEnvironment)
         {
             _productService = productService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: ProductController
@@ -106,15 +108,33 @@ namespace core_strength_yoga_products_management.Controllers
             {
                 updatedProduct = await _productService.Update(product);
             }
-            
 
-            var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);       
+
+            var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
             var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
-            return View("Edit", updatedProduct);
+            return RedirectToAction("Edit", new { updatedProduct.Id });
+        }
+        [HttpPost]
+        public async Task UploadImage(IFormFile image)
+        {
+            string uploads = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+
+                if (image.Length > 0)
+                {
+                    string filePath = Path.Combine(uploads, image.FileName);
+                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(fileStream);
+                    }
+                }
+            
+
+            return;
+            //var body = await HttpContext.Request.Body.ReadAsync(new byte[] { });
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)
@@ -229,15 +249,22 @@ namespace core_strength_yoga_products_management.Controllers
             product.ProductType = new Models.ProductType();
             product.ProductAttributes = new List<ProductAttributes>();
 
-            int.TryParse(form["Image.Id"], out var imageId);
+            int.TryParse(form["ImageId"], out var imageId);
+            
+            var image = new Image(imageId);
+            image.ImageName = form["ImageName"];
+            image.Path = form["Path"];
+            image.Alt = form["Alt"];
+
+
 
             product.Id = int.Parse(form["Id"]);
             product.Name = form["Name"];
             product.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
             product.ProductType.Id = int.Parse(form["ProductType.Id"]);
             product.Description = form["Description"];
-            product.Image = new Image(imageId);
-            product.Image.ImageName = form["Image.ImageName"];
+            product.Image = image;
+            
 
             var formProductAttributes = ExtractProductAttributes(form);
             var productAttributes = new List<ProductAttributes>();
@@ -271,5 +298,10 @@ namespace core_strength_yoga_products_management.Controllers
 
             return product;
         }
+    }
+
+    public class ImageForm
+    {
+        public IFormFile[] Files { get; set; }
     }
 }

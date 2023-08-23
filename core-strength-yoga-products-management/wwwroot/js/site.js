@@ -19,4 +19,71 @@ $(document).ready(function () {
         });
         $(this).hide();
     });
+
+    $("#upload-img").click(function () {
+
+        let fileInput = document.getElementById('myFile');
+        var imageData = new FormData();
+        imageData.append('image', fileInput.files[0]);
+
+        let i = { 'image': fileInput.files[0] }
+
+        console.log(JSON.stringify(i))
+
+        //const uploadFile = file => {
+        //    console.log("Uploading file...");
+        //    const API_ENDPOINT = "/Product/UploadImage";
+        //    const request = new XMLHttpRequest();
+        //    const formData = new FormData();
+
+        //    request.open("POST", API_ENDPOINT, true);
+        //    request.onreadystatechange = () => {
+        //        if (request.readyState === 4 && request.status === 200) {
+        //            console.log(request.responseText);
+        //        }
+        //    };
+        //    formData.append('image', file);
+        //    let formObj = new URLSearchParams(formData).toString();
+        //    console.log(formObj);
+        //    request.send(formObj);
+        //};
+
+        //uploadFile(fileInput.files[0]);
+
+        //fileInput.addEventListener("change", event => {
+        //    const files = event.target.files;
+        //    uploadFile(files[0]);
+        //});
+
+        $.ajax({
+            url: "/Product/UploadImage",
+            type: 'POST',
+            data: imageData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function () {
+                alert('success')
+            },
+            //error: function (err) {
+            //    console.log(err);
+            //    alert('failed');
+            //}
+        });
+    });
+
+    function serialize(data) {
+        let obj = {};
+        for (let [key, value] of data) {
+            if (obj[key] !== undefined) {
+                if (!Array.isArray(obj[key])) {
+                    obj[key] = [obj[key]];
+                }
+                obj[key].push(value);
+            } else {
+                obj[key] = value;
+            }
+        }
+        return obj;
+    }
 });
