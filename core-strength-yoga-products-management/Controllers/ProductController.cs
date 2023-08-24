@@ -60,8 +60,8 @@ namespace core_strength_yoga_products_management.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var Types = await _productService.GetTypes();
-            ViewData["categories"] = Types;
+            var types = await _productService.GetTypes();
+            ViewData["types"] = types;
 
             return View("Index", productsByType);
         }

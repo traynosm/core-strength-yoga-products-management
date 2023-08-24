@@ -5,10 +5,10 @@
         IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType>;
 
     }
-    <a href="/Product/Add" class="btn btn-success">Add</a>
+    <a href="/Product/Add" class="primary-btn site-btn">Add</a>
 
 <div>
-    <form asp-controller="Product" asp-action="GetByCategory" method="get">
+@*    <form asp-controller="Product" asp-action="GetByCategory" method="get">
         <label for="">Choose a cat:</label>
         <select id="@nameof(Product.ProductCategory)" name="productCategoryId">
             @foreach (var cat in categories!)
@@ -17,7 +17,9 @@
             }
         </select>
         <input type="submit">
-    </form>
+
+    </form>*@
+
     <form asp-controller="Product" asp-action="GetByType" method="get">
         <label for="">Choose a type:</label>
         <select id="@nameof(Product.ProductType)" name="productTypeId">
@@ -26,8 +28,9 @@
                 <option value="@type.Id">@type.ProductTypeName</option>
             }
         </select>
-        <input type="submit">
+        <input type="submit" class="primary-btn">
     </form>
+    
 </div>
 
 <h5>Table of Products</h5>
@@ -69,13 +72,13 @@
                 }
                 </td>
                 <td>
-                    <a asp-action="DeleteProduct" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
+                    <a asp-action="DeleteProduct" asp-route-productId="@item.Id" class="primary-btn site-btn">
                         Delete
                         <i class="fa-solid fa-trash fa-fw"></i>
                     </a>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-productId="@item.Id" class="primary-btn checkout-btn">
+                    <a asp-action="Edit" asp-route-productId="@item.Id" class="primary-btn site-btn">
                         Edit
                         <i class="fa-regular fa-pen-to-square"></i>
                     </a>
