@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using core_strength_yoga_products_management.Interfaces;
 
 namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
@@ -22,11 +23,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ILoginService _loginService;
 
-        public LoginModel(SignInManager<core_strength_yoga_products_managementUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<core_strength_yoga_products_managementUser> signInManager, ILogger<LoginModel> logger, ILoginService loginService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _loginService = loginService;
         }
 
         /// <summary>
@@ -115,6 +118,8 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    //Try catch
+                    await _loginService.SaveJwtToken(new Models.User() { Username = Input.Email, Password = Input.Password });
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

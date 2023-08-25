@@ -1,10 +1,12 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
+using System.Data;
 using ProductCategory = core_strength_yoga_products_management.Models.ProductCategory;
 
 namespace core_strength_yoga_products_management.Controllers
@@ -20,6 +22,7 @@ namespace core_strength_yoga_products_management.Controllers
         }
 
         // GET: ProductController
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Index()
         {
             var categories = await _productService.GetCategories();
@@ -278,15 +281,13 @@ namespace core_strength_yoga_products_management.Controllers
             image.Path = form["Path"];
             image.Alt = form["Alt"];
 
-
-
             product.Id = int.Parse(form["Id"]);
             product.Name = form["Name"];
             product.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
             product.ProductType.Id = int.Parse(form["ProductType.Id"]);
             product.Description = form["Description"];
-            product.Image = image;
-            
+            product.FullPrice = decimal.Parse(form["FullPrice"]);
+            product.Image = image;          
 
             var formProductAttributes = ExtractProductAttributes(form);
             var productAttributes = new List<ProductAttributes>();

@@ -22,17 +22,15 @@ namespace core_strength_yoga_products_management.Services
         private readonly HttpClient _httpClient;
         private readonly IOptions<ApiSettings> _settings;
         private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly ILoginService _loginService;
 
-        private string _jwt;
-
-        public ProductService(HttpClient httpClient, IOptions<ApiSettings> settings, UserManager<core_strength_yoga_products_managementUser> userManager)
+        public ProductService(HttpClient httpClient, IOptions<ApiSettings> settings, UserManager<core_strength_yoga_products_managementUser> userManager, ILoginService loginService)
         {
             _httpClient = httpClient;
             _settings = settings;
             _httpClient.BaseAddress = new Uri(_settings.Value.BaseUrl);
             _userManager = userManager;
-
-            _jwt = Login().Result;
+            _loginService = loginService;
         }
         public async Task<IEnumerable<Product>?> GetProducts()
         {
@@ -61,14 +59,21 @@ namespace core_strength_yoga_products_management.Services
 
         public async Task<Product?> Add(Product product)
         {
+
+            if (!_loginService.ValidateToken())
+            {
+                return product;//make this show message to login
+            }
+            var jwtToken = _loginService.JwtToken;
+
             _httpClient.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            if (_jwt != null)
+            if (jwtToken != null)
             {
                 _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", _jwt);
+                    new AuthenticationHeaderValue("Bearer", jwtToken);
             }
 
             var json = JsonConvert.SerializeObject(product);
@@ -90,14 +95,21 @@ namespace core_strength_yoga_products_management.Services
 
         public async Task<Product?> Update(Product product)
         {
+
+            if (!_loginService.ValidateToken())
+            {
+                return product;//make this show message to login
+            }
+            var jwtToken = _loginService.JwtToken;
+
             _httpClient.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            if (_jwt != null)
+            if (jwtToken != null)
             {
                 _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", _jwt);
+                    new AuthenticationHeaderValue("Bearer", jwtToken);
             }
 
             var json = JsonConvert.SerializeObject(product);
@@ -118,14 +130,20 @@ namespace core_strength_yoga_products_management.Services
         }
         public async Task<bool?> DeleteByProductId(int productId)
         {
+            if (!_loginService.ValidateToken())
+            {
+                return false;//make this show message to login
+            }
+            var jwtToken = _loginService.JwtToken;
+
             _httpClient.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            if (_jwt != null)
+            if (jwtToken != null)
             {
                 _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", _jwt);
+                    new AuthenticationHeaderValue("Bearer", jwtToken);
             }
 
             //var json = JsonConvert.SerializeObject(productId);
@@ -139,28 +157,6 @@ namespace core_strength_yoga_products_management.Services
 
             return true;
 
-        }
-
-        //private async Task<JwtSecurityToken> Login()
-        private async Task<string> Login()
-        {
-            //var user = await _userManager.FindByEmailAsync("gavin.rudge@betfair.com");
-            var model = new { Username = "admin@email.com", Password = "Testing123!" };
-            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders
-                .Accept
-                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var result = await _httpClient.PostAsync("/api/v1/auth/login", content);
-            string resultContent = await result.Content.ReadAsStringAsync();
-
-            var jsonObject = JObject.Parse(resultContent);
-            var tokenValue = jsonObject.GetValue("token").ToString();
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Read the JWT token
-            var jwtToken = tokenHandler.ReadJwtToken(tokenValue);
-            return tokenValue;
         }
     }
 }

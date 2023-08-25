@@ -14,6 +14,11 @@
         @Html.Label("Gender")
         @{
             var disabledGender = Model.Id > 0 ? "disabled" : "";
+            var selectedGender = genderItems.FirstOrDefault(g => g.Selected);
+        }
+        @if (disabledGender == "disabled")
+        {
+            <input type="hidden" name="Gender-@Model.Id" id="Gender-@Model.Id" value="@selectedGender.Value">
         }
         <select name="Gender-@Model.Id" id="Gender-@Model.Id" @disabledGender >
             @foreach(var gender in genderItems)
@@ -32,6 +37,12 @@
         @Html.Label("Size")
         @{
             var disabledSize = Model.Id > 0 ? "disabled" : "";
+            var selectedSize = sizeItems.FirstOrDefault(g => g.Selected);
+
+        }
+        @if (disabledSize == "disabled")
+        {
+            <input type="hidden" name="Size-@Model.Id" id="Size-@Model.Id" value="@selectedSize.Value">
         }
         <select name="Size-@Model.Id" id="Size-@Model.Id" @disabledSize>
             @foreach (var size in sizeItems)
@@ -50,6 +61,12 @@
         @Html.Label("Colour")
         @{
             var disabledColour = Model.Id > 0 ? "disabled" : "";
+            var selectedColour = colourItems.FirstOrDefault(g => g.Selected);
+
+        }
+        @if (disabledColour == "disabled")
+        {
+            <input type="hidden" name="Colour-@Model.Id" id="Colour-@Model.Id" value="@selectedColour.Value">
         }
         <select name="Colour-@Model.Id" id="Colour-@Model.Id" @disabledColour>
             @foreach (var colour in colourItems)

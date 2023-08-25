@@ -29,7 +29,7 @@
             <input type="text" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
 
             @Html.LabelFor(m => m.Alt)
-            <input type="text" name="Alt" id="Alt" value="@Model.Alt" disabled />
+            <input type="text" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
     }
 
     </div>
