@@ -3,6 +3,9 @@ using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Settings;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Evaluation;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -112,6 +115,30 @@ namespace core_strength_yoga_products_management.Services
             var updatedProduct = JsonConvert.DeserializeObject<Product>(updatedProductJson);
 
             return updatedProduct;
+        }
+        public async Task<bool?> DeleteByProductId(int productId)
+        {
+            _httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            if (_jwt != null)
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", _jwt);
+            }
+
+            //var json = JsonConvert.SerializeObject(productId);
+            //StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.GetAsync($"/api/v1/Products/Delete/{productId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+            }
+
+            return true;
+
         }
 
         //private async Task<JwtSecurityToken> Login()

@@ -86,4 +86,46 @@ $(document).ready(function () {
         }
         return obj;
     }
+    //validate product Name
+    //$("namecheck").hide();
+    //let nameError = true;
+    //$("#c").keyup(function () {
+    //    validateName();
+    //});
+
+    //function validateName() {
+    //    let nameValue = $("#productnames").val();
+    //    if (nameValue.length == "") {
+    //        $("#namecheck").show();
+    //        nameError = false;
+    //        return false;
+    //    } else if (nameValue.length < 3 || nameValue.length > 50) {
+    //        $("#namecheck").show();
+    //        $("#namecheck").html("**length of productname must be between 3 and 50");
+    //        nameError = false;
+    //        return false;
+    //    } else {
+    //        $("#namecheck").hide();
+    //    }
+    //}
+    //$("#submitbtn").click(function (event) {
+    //    event.preventDefault()
+    //    validateName();
+    //    //validateEquipment();
+    //    //validateType();
+    //    //validateDescription();
+    //    //validatePrice();
+    //    //validateStockLevel();
+    //    //validatePriceAdjustment();
+    //    if (
+    //        nameError == true //&&
+    //        //passwordError == true &&
+    //        //confirmPasswordError == true &&
+    //        //emailError == true
+    //    ) {
+    //        return true;
+    //    } else {
+    //        return false;
+    //    }
+    //});
 });

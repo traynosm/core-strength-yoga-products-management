@@ -3,6 +3,7 @@ using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
 using ProductCategory = core_strength_yoga_products_management.Models.ProductCategory;
 
@@ -95,6 +96,19 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View(product);
         }
+        //public async Task<IActionResult> Delete(int productId)
+        //{
+        //    var product = await _productService.GetProductById(productId);
+
+        //    var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
+        //    ViewData["selectListItemsCategories"] = selectListItemsCategories;
+
+        //    var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
+        //    ViewData["selectListItemsTypes"] = selectListItemsTypes;
+
+        //    return View(product);
+        //}
+
         public async Task<IActionResult> AddOrUpdate(IFormCollection form)
         {
             var product = BuildProductFromFormCollection(form);
@@ -135,6 +149,14 @@ namespace core_strength_yoga_products_management.Controllers
 
             return;
             //var body = await HttpContext.Request.Body.ReadAsync(new byte[] { });
+        }
+
+        [HttpGet("Product/DeleteProduct/{productId}")]
+        public async Task<IActionResult> DeleteProduct(int productid)
+        {
+            var deleted = await _productService.DeleteByProductId(productid);
+
+            return RedirectToAction("Index");
         }
 
         private async Task<List<SelectListItem>> BuildSelectItemsCategories(int productCategoryId)

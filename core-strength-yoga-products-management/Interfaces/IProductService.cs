@@ -12,5 +12,6 @@ namespace core_strength_yoga_products_management.Interfaces
         Task<IEnumerable<Product>?> GetByProductType(int productTypeId);
         Task<Product?> Add(Product product);
         Task<Product?> Update(Product product);
+        Task<bool?> DeleteByProductId(int productId);
     }
 }

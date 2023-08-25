@@ -8,25 +8,26 @@
 @using (Html.BeginForm("AddOrUpdate", "Product", FormMethod.Post))
 {
     @Html.HiddenFor(m => m.Id);
-    <div class="form-group">
+    <div @*id="productnames"*@ class="form-group">
         @Html.LabelFor(m => m.Name)
-        @Html.TextBoxFor(m => m.Name, new{@class = "form-control"})
+        @Html.TextBoxFor(m => m.Name, new{ @class = "form-control", required = true, placeholder = "Enter A Product Name", minlength="3", maxlength="50" })
+        @*<h5 id="namecheck">Product name is not valid</h5>*@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.ProductCategory)
-        @Html.DropDownListFor(m => m.ProductCategory.Id, categories, new{@class = "form-control"})
+        @Html.DropDownListFor(m => m.ProductCategory.Id, categories, new{@class = "form-control", required = true})
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.ProductType)
-        @Html.DropDownListFor(m => m.ProductType.Id, types, new{@class = "form-control"})
+        @Html.DropDownListFor(m => m.ProductType.Id, types, new{@class = "form-control", required = true})
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Description)
-        @Html.TextBoxFor(m => m.Description, new{@class = "form-control"})
+        @Html.TextBoxFor(m => m.Description, new{@class = "form-control", required = true})
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.FullPrice)
-        @Html.TextBoxFor(m => m.FullPrice, new{@class = "form-control"})
+        @Html.TextBoxFor(m => m.FullPrice, new{@class = "form-control", required = true, type="decimal"})
     </div>
 @*    <div class="form-group">
         @Html.HiddenFor(m => m.Image.Id)
@@ -57,7 +58,7 @@
 
 
     <div>
-        <button type="submit" , class="primary-btn site-btn">Update <i class="fa-regular fa-floppy-disk"></i></button>
+        <button id="submitbtn" type="submit" class="primary-btn site-btn">Update <i class="fa-regular fa-floppy-disk"></i></button>
     </div>
 }
 
