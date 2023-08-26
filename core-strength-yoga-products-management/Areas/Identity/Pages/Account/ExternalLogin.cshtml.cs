@@ -24,17 +24,17 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly IUserStore<core_strength_yoga_products_managementUser> _userStore;
-        private readonly IUserEmailStore<core_strength_yoga_products_managementUser> _emailStore;
+        private readonly SignInManager<ManagementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly IUserStore<ManagementUser> _userStore;
+        private readonly IUserEmailStore<ManagementUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            IUserStore<core_strength_yoga_products_managementUser> userStore,
+            SignInManager<ManagementUser> signInManager,
+            UserManager<ManagementUser> userManager,
+            IUserStore<ManagementUser> userStore,
             ILogger<ExternalLoginModel> logger,
             IEmailSender emailSender)
         {
@@ -198,27 +198,27 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private core_strength_yoga_products_managementUser CreateUser()
+        private ManagementUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<core_strength_yoga_products_managementUser>();
+                return Activator.CreateInstance<ManagementUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(core_strength_yoga_products_managementUser)}'. " +
-                    $"Ensure that '{nameof(core_strength_yoga_products_managementUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ManagementUser)}'. " +
+                    $"Ensure that '{nameof(ManagementUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
             }
         }
 
-        private IUserEmailStore<core_strength_yoga_products_managementUser> GetEmailStore()
+        private IUserEmailStore<ManagementUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<core_strength_yoga_products_managementUser>)_userStore;
+            return (IUserEmailStore<ManagementUser>)_userStore;
         }
     }
 }

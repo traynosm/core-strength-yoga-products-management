@@ -14,13 +14,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class ResetAuthenticatorModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
         private readonly ILogger<ResetAuthenticatorModel> _logger;
 
         public ResetAuthenticatorModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
+            UserManager<ManagementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
             ILogger<ResetAuthenticatorModel> logger)
         {
             _userManager = userManager;

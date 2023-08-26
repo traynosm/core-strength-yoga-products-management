@@ -1,8 +1,10 @@
-﻿using core_strength_yoga_products_management.Interfaces;
+﻿using core_strength_yoga_products_management.Areas.Identity.Data;
+using core_strength_yoga_products_management.Extensions;
+using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
-using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
+using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -12,41 +14,126 @@ namespace core_strength_yoga_products_management.Services
     {
         private readonly ILogger<LoginService> _logger;
         private readonly HttpClient _httpClient;
-        public LoginService(ILogger<LoginService> logger, HttpClient httpClient) 
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ITokenService _tokenService;
+        public LoginService(ILogger<LoginService> logger, HttpClient httpClient, 
+            UserManager<ManagementUser> userManager, RoleManager<IdentityRole> roleManager, ITokenService tokenService) 
         {
             _logger = logger;
             _httpClient = httpClient;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _tokenService = tokenService;
 
             _httpClient.BaseAddress = new Uri("http://localhost:5131");
         }
-        public string JwtToken { get; private set; } 
 
-        public async Task SaveJwtToken(User user)
+        public async Task<LoginResult> Login(User user)
         {
-            var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+            var response = await PostAsync("login", user);
+
+            var contentResult = TryExtractContent(response, out var jsonObject);
+            
+            if(contentResult.Contains("failed"))
+            {
+                return new LoginResult { Succeeded = false, Message = contentResult };
+            }
+
+            _tokenService.JwtToken = ExtractFromJson<string>(jsonObject, "token");
+
+            var identityUser = ExtractFromJson<ManagementUser>(jsonObject, "user");
+            var roles = ExtractFromJson<IEnumerable<string>>(jsonObject, "roles");
+
+            identityUser = await identityUser.UpsertUser(_userManager);
+            identityUser = await identityUser.UpdateRoles(_userManager, _roleManager, roles);
+
+            return new LoginResult() { IdentityUser = identityUser, Roles = roles, Succeeded = true };
+        }
+
+        public async Task<LoginResult> Register(User user)
+        {
+            var response = await PostAsync("register", user);
+
+            var contentResult = TryExtractContent(response, out var jsonObject);
+
+            if (contentResult.Contains("failed"))
+            {
+                return new LoginResult { Succeeded = false, Message = contentResult };
+            }
+
+            _tokenService.JwtToken = ExtractFromJson<string>(jsonObject, "token");
+
+            var identityUser = ExtractFromJson<ManagementUser>(jsonObject, "user");
+            var roles = ExtractFromJson<IEnumerable<string>>(jsonObject, "roles");
+
+            identityUser = await identityUser.UpsertUser(_userManager);
+            identityUser = await identityUser.UpdateRoles(_userManager, _roleManager, roles);
+
+            return new LoginResult() { IdentityUser = identityUser, Roles = roles, Succeeded = true };
+        }
+
+        private async Task<HttpResponseMessage> PostAsync(string endpoint, object body)
+        {
+            return await _httpClient.PostAsync($"/api/v1/auth/{endpoint}", WithContent(body));
+        }
+
+        private StringContent WithContent(object body)
+        {
+            WithJsonHeader();
+            return new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
+        }
+
+        private void WithJsonHeader()
+        {
             _httpClient.DefaultRequestHeaders
                 .Accept
                 .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var result = await _httpClient.PostAsync("/api/v1/auth/login", content);
-            string resultContent = await result.Content.ReadAsStringAsync();
-
-            var jsonObject = JObject.Parse(resultContent);
-            var tokenValue = jsonObject.GetValue("token").ToString();
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            // Read the JWT token
-            var jwtToken = tokenHandler.ReadJwtToken(tokenValue);
-            JwtToken = tokenValue;
         }
 
-        public bool ValidateToken()
+        private static string TryExtractContent(HttpResponseMessage response, out JObject result)
         {
-            return !string.IsNullOrEmpty(JwtToken);
+            result = new JObject();
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return $"Request failed {response.StatusCode}. {response.Content.ReadAsStringAsync().Result}";
+            }
+
+            var content = string.Empty;
+            using (var sr = new StreamReader(response.Content.ReadAsStream())) 
+            { 
+                content = sr.ReadToEnd(); 
+            }
+
+            if(string.IsNullOrEmpty(content))
+            {
+                return $"Response content failed to be parsed.";
+            }
+
+            result = JObject.Parse(content);
+
+            return "success";
         }
-        public void RevokeToken()
+
+        private static T ExtractFromJson<T>(JObject jsonObject, string prop) where T : class
         {
-            JwtToken = string.Empty;
+            var value = jsonObject?.GetValue(prop)?.ToString() ??
+                throw new NullReferenceException($"Could not read {prop} from JsonObject.");
+
+            T result = null;
+
+            if(typeof(T) != typeof(string))
+            {
+                result = JsonConvert.DeserializeObject<T>(value) ??
+                            throw new JsonSerializationException($"Deserialization of {prop} to {typeof(T).Name} failed.");
+            }
+            else
+            {
+                result = (T)Convert.ChangeType(value, typeof(T)); 
+            }
+
+            return result;
         }
     }
 }

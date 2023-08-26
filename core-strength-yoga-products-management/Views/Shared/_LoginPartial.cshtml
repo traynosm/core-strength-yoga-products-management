@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using core_strength_yoga_products_management.Areas.Identity.Data
 
-@inject SignInManager<core_strength_yoga_products_managementUser> SignInManager
-@inject UserManager<core_strength_yoga_products_managementUser> UserManager
+@inject SignInManager<ManagementUser> SignInManager
+@inject UserManager<ManagementUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

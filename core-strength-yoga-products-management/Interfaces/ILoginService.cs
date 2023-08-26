@@ -4,11 +4,8 @@ namespace core_strength_yoga_products_management.Interfaces
 {
     public interface ILoginService
     {
-        string JwtToken { get;}
+        Task<LoginResult> Login(User user);
 
-        Task SaveJwtToken(User user);
-        bool ValidateToken();
-        void RevokeToken();
-
+        Task<LoginResult> Register(User user);
     }
 }

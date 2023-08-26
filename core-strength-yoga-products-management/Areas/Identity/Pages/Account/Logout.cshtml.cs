@@ -16,15 +16,15 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
-        private readonly ILoginService _loginService;
+        private readonly ITokenService _tokenService;
 
-        public LogoutModel(SignInManager<core_strength_yoga_products_managementUser> signInManager, ILogger<LogoutModel> logger, ILoginService loginService)
+        public LogoutModel(SignInManager<ManagementUser> signInManager, ILogger<LogoutModel> logger, ITokenService tokenService)
         {
             _signInManager = signInManager;
             _logger = logger;
-            _loginService = loginService;
+            _tokenService = tokenService;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
@@ -32,7 +32,7 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             await _signInManager.SignOutAsync();
 
             _logger.LogInformation("User logged out.");
-            _loginService.RevokeToken();
+            _tokenService.RevokeToken();
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

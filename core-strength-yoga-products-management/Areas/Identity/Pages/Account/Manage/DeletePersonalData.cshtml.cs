@@ -15,13 +15,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class DeletePersonalDataModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
 
         public DeletePersonalDataModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
+            UserManager<ManagementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
             _userManager = userManager;

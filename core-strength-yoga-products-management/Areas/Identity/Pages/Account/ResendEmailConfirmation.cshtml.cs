@@ -20,10 +20,10 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ResendEmailConfirmationModel(UserManager<core_strength_yoga_products_managementUser> userManager, IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<ManagementUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

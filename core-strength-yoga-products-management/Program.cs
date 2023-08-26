@@ -25,26 +25,29 @@ namespace core_strength_yoga_products_management
                     "Connection string " +
                     "'core_strength_yoga_products_managementContextConnection' not found.");
 
-            builder.Services.AddDbContext<core_strength_yoga_products_managementContext>(options => 
+            builder.Services.AddDbContext<ManagementContext>(options => 
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddDefaultIdentity<core_strength_yoga_products_managementUser>(options => 
-                options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ManagementUser>(options => 
+                options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<core_strength_yoga_products_managementContext>();
+                .AddEntityFrameworkStores<ManagementContext>();
 
-            IdentityBuilder identityBuilder = builder.Services.AddIdentityCore<core_strength_yoga_products_managementUser>();
+            builder.Services.AddHttpContextAccessor();
+
+            IdentityBuilder identityBuilder = builder.Services.AddIdentityCore<ManagementUser>();
 
             identityBuilder = new IdentityBuilder(identityBuilder.UserType, builder.Services);
 
-            identityBuilder.AddEntityFrameworkStores<core_strength_yoga_products_managementContext>();
+            identityBuilder.AddEntityFrameworkStores<ManagementContext>();
 
-            identityBuilder.AddSignInManager<SignInManager<core_strength_yoga_products_managementUser>>();
+            identityBuilder.AddSignInManager<SignInManager<ManagementUser>>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient<IProductService, ProductService>();
-            builder.Services.AddSingleton<ILoginService, LoginService>();
+            builder.Services.AddScoped<ILoginService, LoginService>();
+            builder.Services.AddSingleton<ITokenService, TokenService>();
 
             builder.Services.Configure<ApiSettings>(o =>
                 configuration.GetSection("ApiSettings").Bind(o));

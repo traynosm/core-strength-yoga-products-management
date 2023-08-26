@@ -14,11 +14,11 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class Disable2faModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly ILogger<Disable2faModel> _logger;
 
         public Disable2faModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
+            UserManager<ManagementUser> userManager,
             ILogger<Disable2faModel> logger)
         {
             _userManager = userManager;

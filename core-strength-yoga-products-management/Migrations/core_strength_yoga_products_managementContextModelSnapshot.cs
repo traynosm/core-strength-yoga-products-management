@@ -10,7 +10,7 @@ using core_strength_yoga_products_management.Data;
 
 namespace core_strength_yoga_products_management.Migrations
 {
-    [DbContext(typeof(core_strength_yoga_products_managementContext))]
+    [DbContext(typeof(ManagementContext))]
     partial class core_strength_yoga_products_managementContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -18,10 +18,10 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly IEmailSender _sender;
 
-        public RegisterConfirmationModel(UserManager<core_strength_yoga_products_managementUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<ManagementUser> userManager, IEmailSender sender)
         {
             _userManager = userManager;
             _sender = sender;

@@ -17,13 +17,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
 
         public LoginWith2faModel(
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
-            UserManager<core_strength_yoga_products_managementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
+            UserManager<ManagementUser> userManager,
             ILogger<LoginWith2faModel> logger)
         {
             _signInManager = signInManager;

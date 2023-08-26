@@ -3,15 +3,9 @@ using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Settings;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Evaluation;
-using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
 using ProductCategory = core_strength_yoga_products_management.Models.ProductCategory;
 
@@ -21,16 +15,17 @@ namespace core_strength_yoga_products_management.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IOptions<ApiSettings> _settings;
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly ILoginService _loginService;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly ITokenService _tokenService;
 
-        public ProductService(HttpClient httpClient, IOptions<ApiSettings> settings, UserManager<core_strength_yoga_products_managementUser> userManager, ILoginService loginService)
+        public ProductService(HttpClient httpClient, IOptions<ApiSettings> settings, UserManager<ManagementUser> userManager,
+            ITokenService tokenService)
         {
             _httpClient = httpClient;
             _settings = settings;
             _httpClient.BaseAddress = new Uri(_settings.Value.BaseUrl);
             _userManager = userManager;
-            _loginService = loginService;
+            _tokenService = tokenService;
         }
         public async Task<IEnumerable<Product>?> GetProducts()
         {
@@ -60,11 +55,11 @@ namespace core_strength_yoga_products_management.Services
         public async Task<Product?> Add(Product product)
         {
 
-            if (!_loginService.ValidateToken())
+            if (!_tokenService.ValidateToken())
             {
                 return product;//make this show message to login
             }
-            var jwtToken = _loginService.JwtToken;
+            var jwtToken = _tokenService.JwtToken;
 
             _httpClient.DefaultRequestHeaders
                 .Accept
@@ -95,12 +90,12 @@ namespace core_strength_yoga_products_management.Services
 
         public async Task<Product?> Update(Product product)
         {
-
-            if (!_loginService.ValidateToken())
+            if (!_tokenService.ValidateToken())
             {
                 return product;//make this show message to login
             }
-            var jwtToken = _loginService.JwtToken;
+
+            var jwtToken = _tokenService.JwtToken;
 
             _httpClient.DefaultRequestHeaders
                 .Accept
@@ -130,11 +125,11 @@ namespace core_strength_yoga_products_management.Services
         }
         public async Task<bool?> DeleteByProductId(int productId)
         {
-            if (!_loginService.ValidateToken())
+            if (!_tokenService.ValidateToken())
             {
                 return false;//make this show message to login
             }
-            var jwtToken = _loginService.JwtToken;
+            var jwtToken = _tokenService.JwtToken;
 
             _httpClient.DefaultRequestHeaders
                 .Accept

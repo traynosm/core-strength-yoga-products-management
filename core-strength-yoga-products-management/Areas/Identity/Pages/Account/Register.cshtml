@@ -27,10 +27,13 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            <select asp-for="Input.Roles" asp-items="Html.GetEnumSelectList<core_strength_yoga_products_management.Models.Enums.Roles>()">
+                <option value="" disabled>Choose Your Roles (Select Many)</option>
+            </select>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+@*    <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to register.</h3>
             <hr />
@@ -59,7 +62,7 @@
                 }
             }
         </section>
-    </div>
+    </div>*@
 </div>
 
 @section Scripts {

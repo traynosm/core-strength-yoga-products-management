@@ -4,9 +4,7 @@ using core_strength_yoga_products_management.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Build.Evaluation;
 using Microsoft.CodeAnalysis;
-using System.Data;
 using ProductCategory = core_strength_yoga_products_management.Models.ProductCategory;
 
 namespace core_strength_yoga_products_management.Controllers

@@ -15,12 +15,12 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class IndexModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
 
         public IndexModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager)
+            UserManager<ManagementUser> userManager,
+            SignInManager<ManagementUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -61,7 +61,7 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
             public string PhoneNumber { get; set; }
         }
 
-        private async Task LoadAsync(core_strength_yoga_products_managementUser user)
+        private async Task LoadAsync(ManagementUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);

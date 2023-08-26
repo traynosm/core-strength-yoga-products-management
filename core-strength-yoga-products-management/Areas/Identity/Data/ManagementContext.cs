@@ -1,13 +1,12 @@
 ﻿using core_strength_yoga_products_management.Areas.Identity.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace core_strength_yoga_products_management.Data;
 
-public class core_strength_yoga_products_managementContext : IdentityDbContext<core_strength_yoga_products_managementUser>
+public class ManagementContext : IdentityDbContext<ManagementUser>
 {
-    public core_strength_yoga_products_managementContext(DbContextOptions<core_strength_yoga_products_managementContext> options)
+    public ManagementContext(DbContextOptions<ManagementContext> options)
         : base(options)
     {
     }

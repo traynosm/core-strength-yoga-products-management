@@ -18,13 +18,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class EmailModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
         private readonly IEmailSender _emailSender;
 
         public EmailModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
+            UserManager<ManagementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
             IEmailSender emailSender)
         {
             _userManager = userManager;
@@ -74,7 +74,7 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
             public string NewEmail { get; set; }
         }
 
-        private async Task LoadAsync(core_strength_yoga_products_managementUser user)
+        private async Task LoadAsync(ManagementUser user)
         {
             var email = await _userManager.GetEmailAsync(user);
             Email = email;

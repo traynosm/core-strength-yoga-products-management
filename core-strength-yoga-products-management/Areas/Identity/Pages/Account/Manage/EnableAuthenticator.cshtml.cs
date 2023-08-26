@@ -19,14 +19,14 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class EnableAuthenticatorModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger;
         private readonly UrlEncoder _urlEncoder;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
         public EnableAuthenticatorModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
+            UserManager<ManagementUser> userManager,
             ILogger<EnableAuthenticatorModel> logger,
             UrlEncoder urlEncoder)
         {
@@ -143,7 +143,7 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
             }
         }
 
-        private async Task LoadSharedKeyAndQrCodeUriAsync(core_strength_yoga_products_managementUser user)
+        private async Task LoadSharedKeyAndQrCodeUriAsync(ManagementUser user)
         {
             // Load the authenticator key & QR code URI to display on the form
             var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);

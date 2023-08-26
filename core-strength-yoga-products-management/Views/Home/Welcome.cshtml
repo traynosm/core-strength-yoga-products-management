@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using core_strength_yoga_products_management.Areas.Identity.Data;
+@using core_strength_yoga_products_management.Areas.Identity.Pages.Account;
+
+@inject SignInManager<ManagementUser> SignInManager
+@inject UserManager<ManagementUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await @UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(@user);
+
+    if(user != null)
+    {
+        <h4>Hello @user.UserName!</h4>
+
+        <p>You are authorised for the following roles:</p>
+        <ul>
+            @foreach(var role in roles)
+            {
+                <li>@role</li>
+            }
+        </ul>
+    }
+}
