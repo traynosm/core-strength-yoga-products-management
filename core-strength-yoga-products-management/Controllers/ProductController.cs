@@ -20,7 +20,8 @@ namespace core_strength_yoga_products_management.Controllers
         }
 
         // GET: ProductController
-        [Authorize(Roles = "Admin")]
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public async Task<ActionResult> Index()
         {
             var categories = await _productService.GetCategories();
@@ -33,16 +34,24 @@ namespace core_strength_yoga_products_management.Controllers
             return View(products);
         }
 
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
+
         public async Task<IActionResult> GetCategory()
         {
             var categories = await _productService.GetCategories();
             return View(categories);
         }
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
+
         public async Task<IActionResult> GetTypes()
         {
             var types = await _productService.GetTypes();
             return View(types);
         }
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
+
         public async Task<IActionResult> GetByCategory(int productCategoryId)
         {
             var productsByCategories = await _productService.GetByProductCategory(productCategoryId);
@@ -55,6 +64,9 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View("Index", productsByCategories);
         }
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
+
         public async Task<IActionResult> GetByType(int productTypeId)
         {
             var productsByType = await _productService.GetByProductType(productTypeId);
@@ -67,23 +79,33 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View("Index", productsByType);
         }
-        public async Task<IActionResult> Add()
-        {
+
+        [Authorize(Roles = "Admin, ProductManager")]
+        [HttpGet]
+        public async Task<IActionResult> Add(Product? product)
+        {            
+            if(product == null)
+            {
+                product = new Product();
+            }
+            
             var selectListItemsCategories = await BuildSelectItemsCategories(0);
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
             var selectListItemsTypes = await BuildSelectItemsTypes(0);
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
-            return View(new Product());
+            return View("Add", product);
         }
 
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         [HttpGet("Product/ProductAttributePartialView")]
         public IActionResult ProductAttributePartialView()
         {
             return PartialView("ProductAttribute", new ProductAttributes());
         }
 
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         [HttpGet("Product/Edit/{productId}")]
         public async Task<IActionResult> Edit(int productId)
         {
@@ -97,24 +119,14 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View(product);
         }
-        //public async Task<IActionResult> Delete(int productId)
-        //{
-        //    var product = await _productService.GetProductById(productId);
 
-        //    var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
-        //    ViewData["selectListItemsCategories"] = selectListItemsCategories;
-
-        //    var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
-        //    ViewData["selectListItemsTypes"] = selectListItemsTypes;
-
-        //    return View(product);
-        //}
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
 
         public async Task<IActionResult> AddOrUpdate(IFormCollection form)
         {
             var product = BuildProductFromFormCollection(form);
             var updatedProduct = new Product();
-            //update in db backend
+
             if (product.Id == 0)
             {
                 updatedProduct = await _productService.Add(product);
@@ -124,15 +136,24 @@ namespace core_strength_yoga_products_management.Controllers
                 updatedProduct = await _productService.Update(product);
             }
 
-
             var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
             ViewData["selectListItemsCategories"] = selectListItemsCategories;
 
             var selectListItemsTypes = await BuildSelectItemsTypes(product.ProductType.Id);
             ViewData["selectListItemsTypes"] = selectListItemsTypes;
 
-            return RedirectToAction("Edit", new { updatedProduct.Id });
+            if(updatedProduct!.Id == 0)
+            {
+                return await Add(updatedProduct);
+            }
+            else
+            {
+                return RedirectToAction("Edit", new { updatedProduct.Id });
+            }
+
         }
+
+        [Authorize(Roles = "Admin, ProductManager")]
         [HttpPost]
         public async Task UploadImage(IFormFile image)
         {
@@ -152,6 +173,7 @@ namespace core_strength_yoga_products_management.Controllers
             //var body = await HttpContext.Request.Body.ReadAsync(new byte[] { });
         }
 
+        [Authorize(Roles = "Admin, ProductManager")]
         [HttpGet("Product/DeleteProduct/{productId}")]
         public async Task<IActionResult> DeleteProduct(int productid)
         {
@@ -197,6 +219,8 @@ namespace core_strength_yoga_products_management.Controllers
             }
             return selectListItemsTypes;
         }
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public static List<SelectListItem> BuildSelectItemsGender(int id)
         {
             var selectListItems = new List<SelectListItem>();
@@ -212,6 +236,7 @@ namespace core_strength_yoga_products_management.Controllers
             return selectListItems;
         }
 
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public static List<SelectListItem> BuildSelectItemsSize(int id)
         {
             var selectListItems = new List<SelectListItem>();
@@ -226,6 +251,8 @@ namespace core_strength_yoga_products_management.Controllers
             }
             return selectListItems;
         }
+
+        [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public static List<SelectListItem> BuildSelectItemsColour(int id)
         {
             var selectListItems = new List<SelectListItem>();
@@ -319,10 +346,5 @@ namespace core_strength_yoga_products_management.Controllers
 
             return product;
         }
-    }
-
-    public class ImageForm
-    {
-        public IFormFile[] Files { get; set; }
     }
 }

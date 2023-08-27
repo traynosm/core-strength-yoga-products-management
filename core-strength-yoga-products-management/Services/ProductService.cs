@@ -54,7 +54,6 @@ namespace core_strength_yoga_products_management.Services
 
         public async Task<Product?> Add(Product product)
         {
-
             if (!_tokenService.ValidateToken())
             {
                 return product;//make this show message to login

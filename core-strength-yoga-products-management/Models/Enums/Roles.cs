@@ -2,7 +2,9 @@
 {
     public enum Roles
     {
-        Admin = 0, 
-        User = 1
+        Admin = 0,
+        ProductExecutive = 1,
+        ProductManager = 2,
+        BusinessAnalyst = 3,
     }
 }
