@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@500&family=Inter:wght@100;400;700&display=swap');
+
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
@@ -18,7 +20,9 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
 }
 .basket-img {
     width: 50px;
@@ -57,3 +61,36 @@ input:invalid {
 input:valid {
     border: 2px solid black;
 }
+
+/* https://dev.to/dcodeyt/creating-beautiful-html-tables-with-css-428l  */
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .styled-table thead tr {
+        background-color: #009879;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .styled-table th,
+    .styled-table td {
+         padding: 12px 15px;
+    }
+
+    .styled-table tbody tr {
+         border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+         background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+         border-bottom: 2px solid #009879;
+     }
+

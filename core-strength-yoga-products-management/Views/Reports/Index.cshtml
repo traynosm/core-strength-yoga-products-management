@@ -1,0 +1,31 @@
+﻿@model IEnumerable<core_strength_yoga_products_management.Models.StockAudit>
+
+@*<div class="m-5">
+<button href="/Reports/AuditReport" class="m-5 p-5 btn-info"><i class="fa fa-bar-chart" aria-hidden="true"></i></i> 
+    Stock Audit Reports</button>
+</div>
+<div class="m-5">
+<button href="/Reports/ProductReport" class="m-5 p-5"><i class="fa fa-line-chart" aria-hidden="true"></i></i>  
+    Product Reports</button>
+    </div>
+*@
+
+
+<form asp-action="SearchByUsername" method="post">
+    <input type="datetime-local" id="date-start"name="date-start"/>
+    <input type="datetime-local" id="date-end" name="date-end" />
+    <input type="text" id="username" name="username"/>
+    <input type="submit" class="btn btn-primary"/>
+
+</form>
+
+
+        
+
+
+@foreach (var item in @Model)
+{
+    <p>@item.ProductId</p>
+    <p>@item.ChangedAt</p>
+    <p>@item.StockLevelChange</p>
+}
