@@ -94,8 +94,8 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             public string Password { get; set; }
 
             [Required]
-            [Display(Name = "Roles")]
-            public IEnumerable<string> Roles { get; set; }
+            [Display(Name = "Role")]
+            public string Role { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -119,11 +119,8 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var roles = new List<string>(); 
-                foreach(var role in Input.Roles)
-                {
-                    roles.Add(Enum.Parse(typeof(Roles), role).ToString());
-                }
+                var role = Enum.Parse(typeof(Roles), Input.Role).ToString();
+                var roles = new List<string>() { role };
                 
                 var apiLoginResult = await _loginService.Register(new Models.User()
                 {

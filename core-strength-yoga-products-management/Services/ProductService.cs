@@ -1,6 +1,7 @@
 ﻿using core_strength_yoga_products_management.Areas.Identity.Data;
 using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
+using core_strength_yoga_products_management.Models.Exceptions;
 using core_strength_yoga_products_management.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -56,7 +57,7 @@ namespace core_strength_yoga_products_management.Services
         {
             if (!_tokenService.ValidateToken())
             {
-                return product;//make this show message to login
+                throw new InvalidTokenException();
             }
             var jwtToken = _tokenService.JwtToken;
 
@@ -91,7 +92,7 @@ namespace core_strength_yoga_products_management.Services
         {
             if (!_tokenService.ValidateToken())
             {
-                return product;//make this show message to login
+                throw new InvalidTokenException();
             }
 
             var jwtToken = _tokenService.JwtToken;
@@ -126,7 +127,7 @@ namespace core_strength_yoga_products_management.Services
         {
             if (!_tokenService.ValidateToken())
             {
-                return false;//make this show message to login
+                throw new InvalidTokenException();
             }
             var jwtToken = _tokenService.JwtToken;
 
@@ -139,9 +140,6 @@ namespace core_strength_yoga_products_management.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", jwtToken);
             }
-
-            //var json = JsonConvert.SerializeObject(productId);
-            //StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.GetAsync($"/api/v1/Products/Delete/{productId}");
 

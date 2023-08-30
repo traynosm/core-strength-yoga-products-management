@@ -1,6 +1,7 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Models.Enums;
+using core_strength_yoga_products_management.Models.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -127,13 +128,20 @@ namespace core_strength_yoga_products_management.Controllers
             var product = BuildProductFromFormCollection(form);
             var updatedProduct = new Product();
 
-            if (product.Id == 0)
+            try
             {
-                updatedProduct = await _productService.Add(product);
+                if (product.Id == 0)
+                {
+                    updatedProduct = await _productService.Add(product);
+                }
+                else
+                {
+                    updatedProduct = await _productService.Update(product);
+                }
             }
-            else
+            catch(InvalidTokenException)
             {
-                updatedProduct = await _productService.Update(product);
+                return Redirect("~/Identity/Account/Login");
             }
 
             var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
@@ -177,7 +185,14 @@ namespace core_strength_yoga_products_management.Controllers
         [HttpGet("Product/DeleteProduct/{productId}")]
         public async Task<IActionResult> DeleteProduct(int productid)
         {
-            var deleted = await _productService.DeleteByProductId(productid);
+            try
+            {
+                var deleted = await _productService.DeleteByProductId(productid);
+            }
+            catch (InvalidTokenException)
+            {
+                return Redirect("~/Identity/Account/Login");
+            }
 
             return RedirectToAction("Index");
         }

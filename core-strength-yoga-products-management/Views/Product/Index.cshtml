@@ -1,40 +1,33 @@
 ﻿@model IEnumerable<core_strength_yoga_products_management.Models.Product>;
 
     @{
-        IEnumerable<ProductCategory> categories = ViewData["categories"] as IEnumerable<ProductCategory>;
-        IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType>;
+        //IEnumerable<ProductCategory> categories = ViewData["categories"] as IEnumerable<ProductCategory> ?? 
+        //    throw new NullReferenceException($"Categories cannot be null in Product View");
+
+        IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType> ??
+            throw new NullReferenceException($"Types cannot be null in Product View");
 
     }
-    <a href="/Product/Add" class="primary-btn site-btn">Add</a>
 
-<div>
-@*    <form asp-controller="Product" asp-action="GetByCategory" method="get">
-        <label for="">Choose a cat:</label>
-        <select id="@nameof(Product.ProductCategory)" name="productCategoryId">
-            @foreach (var cat in categories!)
-            {
-              <option value="@cat.Id">@cat.ProductCategoryName</option>
-            }
-        </select>
-        <input type="submit">
-
-    </form>*@
-
+<div class="form-floating mb-5">
+    <a href="/Product/Add" class="btn btn-primary">Add New Product <i class="fa-regular fa-plus"></i></a>
+</div>
+<div class="form-floating mb-3">
+    <h5>Select By Product Type</h5>
     <form asp-controller="Product" asp-action="GetByType" method="get">
-        <label for="">Choose a type:</label>
         <select id="@nameof(Product.ProductType)" name="productTypeId">
+            <option value="0">Select All</option>
             @foreach (var type in types!)
             {
                 <option value="@type.Id">@type.ProductTypeName</option>
             }
         </select>
-        <input type="submit" class="primary-btn">
+        <input type="submit" class="btn-sm btn-primary">
     </form>
-    
 </div>
+    
 
-<h5>Table of Products</h5>
-<table class="table mb-3">
+<table class="styled-table mb-3">
     <tbody>
         <tr>
             <th>
@@ -43,14 +36,17 @@
             <th>
                 @Html.DisplayNameFor(m => m.ProductType)
             </th>
-
             <th>
                 @Html.DisplayNameFor(m => m.Name)
             </th>
-
-
             <th>
                 Gender | Size | Colour | Stock Level
+            </th>
+            <th>
+                Delete
+            </th>
+            <th>
+                Edit
             </th>
         </tr>
         @foreach (var item in Model)
@@ -63,31 +59,27 @@
                     @item.ProductType.ProductTypeName
                 </td>
                 <td>
-                    <a href="Product/ProductById/@item.Id">@item.Name</a>
+                    @item.Name
                 </td>
                 <td>
                 @foreach (var attr in item.ProductAttributes)
                 {
-                        <p>@attr.Gender | @attr.Size | @attr.Colour | @attr.StockLevel</p>
+                    <p>@attr.Gender | @attr.Size | @attr.Colour | @attr.StockLevel</p>
                 }
                 </td>
                 <td>
-                    <a asp-action="DeleteProduct" asp-route-productId="@item.Id" class="primary-btn site-btn">
+                    <a asp-action="DeleteProduct" asp-route-productId="@item.Id" class="btn btn-danger">
                         Delete
                         <i class="fa-solid fa-trash fa-fw"></i>
                     </a>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-productId="@item.Id" class="primary-btn site-btn">
+                    <a asp-action="Edit" asp-route-productId="@item.Id" class="btn btn-warning">
                         Edit
                         <i class="fa-regular fa-pen-to-square"></i>
                     </a>
-                </td>
-                
+                </td>           
             </tr>
         }
     </tbody>
 </table>
-<form>
-
-</form>
