@@ -33,11 +33,11 @@ namespace core_strength_yoga_products_management.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<StockAudit>>(
                 $"/api/v1/StockAudit/{productId}");
         }
-        public async Task<IEnumerable<StockAudit>> SearchByUsername(
+        public async Task<IEnumerable<StockAudit>> FilterReport(
             string username, DateTime startDateTime, DateTime endDateTime)
         {
             var param = $"/api/v1/StockAudit" +
-                $"/SearchByUsername" +
+                $"/FilterReport" +
                 $"/Username={username.Replace(" ", "%20")}" +
                 $"/StartDateTime={startDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}" +
                 $"/EndDateTime={endDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}";
