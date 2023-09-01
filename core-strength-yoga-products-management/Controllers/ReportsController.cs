@@ -23,9 +23,8 @@ namespace core_strength_yoga_products_management.Controllers
 
             var products = await _productService.GetProducts();
             ViewData["products"] = products;
-            var stockAudits = await _stockAuditService.Get(2);
 
-            return View(stockAudits);
+            return View();
         }
         [HttpPost]
         public async Task<IActionResult> FilterReport(IFormCollection form)
@@ -33,10 +32,14 @@ namespace core_strength_yoga_products_management.Controllers
             DateTime.TryParse(form["date-start"], out var startDate);
             DateTime.TryParse(form["date-end"], out var endDate);
             var username = form["username"];
+            var productTypeId = int.Parse(form["product-type"]);
 
             var stockAudits = await _stockAuditService.FilterReport(
-                username, startDate, endDate);
-            
+                username, startDate, endDate, productTypeId);
+
+            var types = await _productService.GetTypes();
+            ViewData["types"] = types;
+
             return View("Index", stockAudits);
 
         }

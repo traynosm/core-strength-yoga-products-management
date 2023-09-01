@@ -1,12 +1,8 @@
 ﻿@model IEnumerable<core_strength_yoga_products_management.Models.StockAudit>
 
 @{
-    IEnumerable<ProductCategory> categories = ViewData["categories"] as IEnumerable<ProductCategory> ??
-        throw new NullReferenceException($"Categories cannot be null in Product View");
-
     IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType> ??
         throw new NullReferenceException($"Types cannot be null in Product View");
-
 }
 @*<div class="m-5">
 <button href="/Reports/AuditReport" class="m-5 p-5 btn-info"><i class="fa fa-bar-chart" aria-hidden="true"></i></i> 
@@ -19,10 +15,19 @@
 *@
 
 
+
 <form asp-action="FilterReport" method="post">
     <input type="datetime-local" id="date-start"name="date-start"/>
     <input type="datetime-local" id="date-end" name="date-end" />
     <input type="text" id="username" name="username"/>
+    <select id="product-type" name="product-type">
+    <option value="0">Select All</option>
+    @foreach (var type in types!)
+    {
+        <option value="@type.Id">@type.ProductTypeName</option>
+    }
+    </select>
+
     <input type="submit" class="btn btn-primary"/>
 
 @*    <section class="m-2">
@@ -67,26 +72,25 @@
 </form>
 
 
-
-
-<table class="styled-table mb-3">
-    <tbody>
-@foreach (var item in @Model)
+@if (Model != null && Model.Any())
 {
     <table class="styled-table mb-3">
-    <tbody>
-    <tr>
-    <td>@item.Product.Name</td>
-        <td>@item.ProductAttributes.Colour</td>
-        <td>@item.ProductAttributes.Size</td>
-        <td>@item.ProductAttributes.Gender</td>
-        <td>@item.OldStockLevel</td>
-        <td>@item.NewStockLevel</td>
-        <td>@item.StockLevelChange</td>
-        <td>@item.ChangedAt</td>
+        <tbody>
+            @foreach (var item in @Model)
+            {
+                <tr>
+                    @* <td>@item.Product.Name</td>
+                        <td>@item.ProductAttributes.Colour</td>
+                         <td>@item.ProductAttributes.Size</td>
+                        <td>@item.ProductAttributes.Gender</td>*@
+                    <td>@item.OldStockLevel</td>
+                    <td>@item.NewStockLevel</td>
+                    <td>@item.StockLevelChange</td>
+                    <td>@item.ChangedAt</td>
 
-    
-    </tr>
-</tbody>
-</table>
+
+                </tr>
+            }
+        </tbody>
+    </table>
 }
