@@ -33,13 +33,24 @@ namespace core_strength_yoga_products_management.Controllers
             DateTime.TryParse(form["date-end"], out var endDate);
             var username = form["username"];
             var productTypeId = int.Parse(form["product-type"]);
+            var productId = int.Parse(form["product"]);
 
             var stockAudits = await _stockAuditService.FilterReport(
-                username, startDate, endDate, productTypeId);
+                username, startDate, endDate, productTypeId, productId);
 
             var types = await _productService.GetTypes();
             ViewData["types"] = types;
 
+            var products = await _productService.GetProducts();
+            ViewData["products"] = products;
+
+            ViewData["date-start"] = startDate.ToString("yyyy-MM-ddTHH:mm");
+            ViewData["date-end"] = endDate.ToString("yyyy-MM-ddTHH:mm");
+            ViewData["username"] = username;
+            ViewData["product-type"] = productTypeId;
+            ViewData["product"] = productId;
+
+            //2018 - 06 - 12T19: 30
             return View("Index", stockAudits);
 
         }

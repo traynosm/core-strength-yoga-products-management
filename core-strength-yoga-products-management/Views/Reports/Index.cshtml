@@ -2,73 +2,76 @@
 
 @{
     IEnumerable<ProductType> types = ViewData["types"] as IEnumerable<ProductType> ??
-        throw new NullReferenceException($"Types cannot be null in Product View");
+        throw new NullReferenceException($"Types cannot be null in Reports View");
+
+    IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
+        throw new NullReferenceException($"Products cannot be null in Reports View");
+
+    string? startDate = ViewData["date-start"] as string;
+    string? endDate = ViewData["date-end"] as string;
+    string? username = ViewData["username"]?.ToString() as string;
+    string? productTypeId = ViewData["product-type"]?.ToString() as string;
+    string? productId = ViewData["product"]?.ToString() as string;
+
 }
-@*<div class="m-5">
-<button href="/Reports/AuditReport" class="m-5 p-5 btn-info"><i class="fa fa-bar-chart" aria-hidden="true"></i></i> 
-    Stock Audit Reports</button>
-</div>
-<div class="m-5">
-<button href="/Reports/ProductReport" class="m-5 p-5"><i class="fa fa-line-chart" aria-hidden="true"></i></i>  
-    Product Reports</button>
-    </div>
-*@
-
-
 
 <form asp-action="FilterReport" method="post">
-    <input type="datetime-local" id="date-start"name="date-start"/>
-    <input type="datetime-local" id="date-end" name="date-end" />
-    <input type="text" id="username" name="username"/>
+    <label for="date-start">From</label>
+    <input type="datetime-local" id="date-start" name="date-start" value="@startDate"/>
+    <label for="date-end">To</label>
+    <input type="datetime-local" id="date-end" name="date-end" value="@endDate"/>
+    <label for="username">Username/Customer Name</label>
+    <input type="text" id="username" name="username" value="@username"/>
+    <label for="product">Product</label>
+    <select id="product" name="product">
+        @if(productId == "0" || productId == null)
+        {
+            <option value="0" selected>Select All</option>
+        }
+        else
+        {
+            <option value="0">Select All</option>
+        }
+        @foreach (var product in products!)
+        {
+            if (product.Id.ToString() == productId)
+            {
+                <option value="@product.Id" selected>@product.Name</option>
+            }
+            else
+            {
+                <option value="@product.Id">@product.Name</option>
+
+            }
+        }
+    </select>
+    <label for="product-type">Product Type</label>
     <select id="product-type" name="product-type">
-    <option value="0">Select All</option>
-    @foreach (var type in types!)
-    {
-        <option value="@type.Id">@type.ProductTypeName</option>
-    }
+        @if (productId == "0" || productId == null)
+        {
+            <option value="0" selected>Select All</option>
+        }
+        else
+        {
+            <option value="0">Select All</option>
+        }
+
+        @foreach (var type in types!)
+        {
+            if (type.Id.ToString() == productTypeId)
+            {
+                <option value="@type.Id" selected>@type.ProductTypeName</option>
+            }
+            else
+            {
+                <option value="@type.Id">@type.ProductTypeName</option>
+            }
+
+        }
     </select>
 
     <input type="submit" class="btn btn-primary"/>
-
-@*    <section class="m-2">
-        <div>Product Type</div>
-        @foreach (var item in Model)
-        {
-            var @id = (int)item;
-            var @isChecked = @id == item.Product.ProductType.Id || @id == 0 ? true : false;
-            <input type="radio" name="productType" value="@id" checked="@isChecked" />
-
-            @item.ToString()
-
-            <br />
-        }
-    </section>*@
-@*    <section class="m-2">
-        <div>Size</div>
-        @foreach (var value in @sizes)
-        {
-            var @id = (int)value;
-            var @isChecked = @id == sizeId || @id == 0 ? true : false;
-            <input type="radio" name="Size" value="@id" checked="@isChecked" />
-
-            @value.ToString()
-
-            <br />
-        }
-    </section>
-    <section class="m-2">
-        <div>Colour</div>
-        @foreach (var value in @colours)
-        {
-            var @id = (int)value;
-            var @isChecked = @id == colourId || @id == 0 ? true : false;
-            <input type="radio" name="Colour" value="@id" checked="@isChecked" />
-
-            @value.ToString()
-            <br />
-        }
-    </section>*@
-@*    <input type="submit" value="Filter" class="primary-btn checkout-btn" />*@
+ 
 </form>
 
 
@@ -87,6 +90,7 @@
                     <td>@item.NewStockLevel</td>
                     <td>@item.StockLevelChange</td>
                     <td>@item.ChangedAt</td>
+                    <td>@item.ProductId</td>
 
 
                 </tr>

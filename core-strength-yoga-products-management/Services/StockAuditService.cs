@@ -35,16 +35,17 @@ namespace core_strength_yoga_products_management.Services
                 $"/api/v1/StockAudit/{productId}");
         }
         public async Task<IEnumerable<StockAudit>> FilterReport(
-            string username, DateTime startDateTime, DateTime endDateTime, int productTypeId)
+            string username, DateTime startDateTime, DateTime endDateTime, int productTypeId, int productId)
         {
             var usern = string.IsNullOrEmpty(username) ? "unknown" : username;
 
             var param = $"/api/v1/StockAudit" +
                 $"/FilterReport" +
-                $"/Username={usern.Replace(" ", "%20")}" +
                 $"/StartDateTime={startDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}" +
                 $"/EndDateTime={endDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}" +
-                $"/ProductTypeId={productTypeId}";
+                $"/ProductId={productId}" +
+                $"/ProductTypeId={productTypeId}" +
+                $"/Username={usern.Replace(" ", "%20")}";
 
             //var param = $"/api/v1/StockAudit/SearchByUsername/Username=tit/StartDateTime=arse/EndDateTime=dick";
 
