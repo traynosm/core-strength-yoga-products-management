@@ -16,5 +16,10 @@ namespace core_strength_yoga_products_management.Models
         public Enums.Colour Colour { get; set; }
         public Enums.Size Size { get; set; }
         public Enums.Gender Gender { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Gender}, {Size}, {Colour}";
+        }
     }
 }

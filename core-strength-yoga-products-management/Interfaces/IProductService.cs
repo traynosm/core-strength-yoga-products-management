@@ -4,6 +4,7 @@ namespace core_strength_yoga_products_management.Interfaces
 {
     public interface IProductService
     {
+        IEnumerable<Product> AllProducts { get; }
         Task<IEnumerable<Product>?> GetProducts();
         Task<Product?> GetProductById(int productId);
         Task<IEnumerable<ProductCategory>?> GetCategories();

@@ -1,0 +1,42 @@
+﻿@using NonFactors.Mvc.Grid;
+@model IEnumerable<core_strength_yoga_products_management.Models.BasketItem>
+
+    @{
+        IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
+            throw new NullReferenceException($"Products cannot be null in Sales Report View");
+        
+    IEnumerable<Order> orders = ViewData["orders"] as IEnumerable<Order> ??
+        throw new NullReferenceException($"Orders cannot be null in Sales Report View");
+
+    }
+
+<h4>Sales Report</h4>
+
+@(Html
+    .Grid(Model)
+    .Build(columns =>
+    {
+        columns.Add(model => model.ProductId).Titled("Product Id")
+            .Sortable(true)
+            .Filterable(true);
+
+        columns.Add(model => model.ProductAttributeId).Titled("Product Attribute Id")
+            .Sortable(true)
+            .Filterable(true);
+
+        columns.Add(model => model.Quantity).Titled("Quantity")
+            .Sortable(false)
+            .Filterable(false);
+
+        columns.Add().Titled("Name").RenderedAs(model => products.FirstOrDefault(p => p.Id == model.ProductId).Name);
+
+
+    })
+    .Pageable(pager =>
+        {
+            pager.PagesToDisplay = 5;
+            pager.RowsPerPage = 10;
+        })
+    .Filterable()
+    .Sortable()
+    .Empty("No Data Found"))

@@ -1,0 +1,56 @@
+﻿@using NonFactors.Mvc.Grid;
+@model IEnumerable<core_strength_yoga_products_management.Models.StockAudit>
+@*https://aspnet-core-grid.azurewebsites.net/*@
+
+<h4>Stock Level Changes Audit Report</h4>
+
+@(Html
+    .Grid(Model)
+    .Build(columns =>
+    {
+        columns.Add(model => model.Id).Titled("Audit Id")
+            .Sortable(false)
+            .Filterable(false)
+            .Hidden();
+
+        columns.Add(model => model.ChangedAt).Titled("Changed At")
+            .Formatted("{0:dd-MM-yyyy HH:mm}")
+            .Sortable(true)
+            .Filterable(GridFilterType.Multi);
+
+        columns.Add(model => model.ProductId).Titled("Product Id");
+
+        columns.Add(model => model.ProductAttributeId).Titled("Product Attr Id");
+
+        columns.Add(model => model.Product.Name).Titled("Product Details")
+            .Encoded(false)
+            .RenderedAs(model =>
+                       $"<a href='/Reports/StockChanges/{model.ProductId}/{model.ProductAttributeId}'>" +
+                       $"{model.Product.Name} - <small>{model.ProductAttributes.ToString()}</small></a>")
+            .Sortable(true)
+            .Filterable(true);
+
+        columns.Add(model => model.Username).Titled("Changed By")
+            .Sortable(true)
+            .Filterable(true);
+
+        columns.Add(model => model.OldStockLevel).Titled("Changed From")
+            .Sortable(false)
+            .Filterable(false);
+
+        columns.Add(model => model.NewStockLevel).Titled("Changed To")
+            .Sortable(false)
+            .Filterable(false);
+
+        columns.Add(model => model.StockLevelChange).Titled("Stock Change")
+            .Sortable(false)
+            .Filterable(false);
+    })
+    .Pageable(pager =>
+        {
+            pager.PagesToDisplay = 5;
+            pager.RowsPerPage = 10;
+        })
+    .Filterable()
+    .Sortable()
+    .Empty("No Data Found"))

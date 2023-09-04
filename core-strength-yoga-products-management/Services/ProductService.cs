@@ -27,7 +27,12 @@ namespace core_strength_yoga_products_management.Services
             _httpClient.BaseAddress = new Uri(_settings.Value.BaseUrl);
             _userManager = userManager;
             _tokenService = tokenService;
+
+            AllProducts = GetProducts().Result;
         }
+
+        public IEnumerable<Product>? AllProducts { get; private set; }
+
         public async Task<IEnumerable<Product>?> GetProducts()
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<Product>>("/api/v1/Products");
@@ -52,7 +57,6 @@ namespace core_strength_yoga_products_management.Services
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<Product>>($"/api/v1/Products/ByType/{productTypeId}");
         }
-
         public async Task<Product?> Add(Product product)
         {
             if (!_tokenService.ValidateToken())
@@ -85,9 +89,10 @@ namespace core_strength_yoga_products_management.Services
 
             var updatedProduct = JsonConvert.DeserializeObject<Product>(updatedProductJson);
 
+            AllProducts = await GetProducts();
+
             return updatedProduct;
         }
-
         public async Task<Product?> Update(Product product)
         {
             if (!_tokenService.ValidateToken())
@@ -121,6 +126,8 @@ namespace core_strength_yoga_products_management.Services
 
             var updatedProduct = JsonConvert.DeserializeObject<Product>(updatedProductJson);
 
+            AllProducts = await GetProducts();
+
             return updatedProduct;
         }
         public async Task<bool?> DeleteByProductId(int productId)
@@ -146,6 +153,8 @@ namespace core_strength_yoga_products_management.Services
             if (!response.IsSuccessStatusCode)
             {
             }
+
+            AllProducts = await GetProducts();
 
             return true;
 

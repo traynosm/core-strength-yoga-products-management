@@ -49,6 +49,7 @@ namespace core_strength_yoga_products_management
             builder.Services.AddScoped<ILoginService, LoginService>();
             builder.Services.AddSingleton<ITokenService, TokenService>();
             builder.Services.AddHttpClient<IStockAuditService, StockAuditService>();
+            builder.Services.AddHttpClient<IOrderService, OrderService>();
 
             builder.Services.Configure<ApiSettings>(o =>
                 configuration.GetSection("ApiSettings").Bind(o));

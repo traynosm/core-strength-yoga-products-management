@@ -1,56 +1,84 @@
-﻿using core_strength_yoga_products_management.Areas.Identity.Data;
-using core_strength_yoga_products_management.Interfaces;
+﻿using core_strength_yoga_products_management.Interfaces;
 using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Settings;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using NuGet.Common;
 
 namespace core_strength_yoga_products_management.Services
 {
-    public class StockAuditService :IStockAuditService
+    public class StockAuditService : IStockAuditService
     {
         private readonly HttpClient _httpClient;
         private readonly IOptions<ApiSettings> _settings;
-        private readonly UserManager<ManagementUser> _userManager;
-        private readonly ITokenService _tokenService;
         private readonly ILogger<StockAuditService> _logger;
         private readonly IProductService _productService;
 
-        public StockAuditService(HttpClient httpClient, IOptions<ApiSettings> settings, UserManager<ManagementUser> userManager, ITokenService tokenService, ILogger<StockAuditService> logger, IProductService productService)
+        public StockAuditService(HttpClient httpClient, IOptions<ApiSettings> settings, 
+            ILogger<StockAuditService> logger, IProductService productService)
         {
             _httpClient = httpClient;
             _settings = settings;
-            _userManager = userManager;
-            _tokenService = tokenService;
             _logger = logger;
             _productService = productService;
             _httpClient.BaseAddress = new Uri(_settings.Value.BaseUrl);
 
         }
-
-        public async Task<IEnumerable<StockAudit>> Get(int productId)
+        public async Task<IEnumerable<StockAudit>?> Get()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<StockAudit>>(
-                $"/api/v1/StockAudit/{productId}");
+            var stockAudits = await _httpClient.GetFromJsonAsync<IEnumerable<StockAudit>>(
+                $"/api/v1/StockAudit");
+
+            if( stockAudits == null)
+            {
+                return new List<StockAudit>();
+            }
+
+            AttachProducts(stockAudits);
+
+            return stockAudits;
         }
-        public async Task<IEnumerable<StockAudit>> FilterReport(
-            string username, DateTime startDateTime, DateTime endDateTime, int productTypeId, int productId)
+
+        public async Task<IEnumerable<StockAudit>?> Get(int productId)
         {
-            var usern = string.IsNullOrEmpty(username) ? "unknown" : username;
+            var stockAudits = await _httpClient.GetFromJsonAsync<IEnumerable<StockAudit>>(
+                $"/api/v1/StockAudit/{productId}");
 
-            var param = $"/api/v1/StockAudit" +
-                $"/FilterReport" +
-                $"/StartDateTime={startDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}" +
-                $"/EndDateTime={endDateTime.ToString("yyyy-MM-ddTHH:mm:ss")}" +
-                $"/ProductId={productId}" +
-                $"/ProductTypeId={productTypeId}" +
-                $"/Username={usern.Replace(" ", "%20")}";
+            if (stockAudits == null)
+            {
+                return new List<StockAudit>();
+            }
 
-            //var param = $"/api/v1/StockAudit/SearchByUsername/Username=tit/StartDateTime=arse/EndDateTime=dick";
+            AttachProducts(stockAudits);
 
-            return await _httpClient.GetFromJsonAsync<IEnumerable<StockAudit>>(param);
+            return stockAudits;
+        }
 
+        private void AttachProducts(IEnumerable<StockAudit> stockAudits)
+        {
+            foreach(var audit in stockAudits)
+            {
+                var product = _productService.AllProducts.FirstOrDefault(p => p.Id == audit.ProductId);
+
+                if(product != null)
+                {
+                    audit.Product = product;
+                }
+                else
+                {
+                    continue;
+                }
+
+                var productAttribute = product!.ProductAttributes.FirstOrDefault(p => p.Id == audit.ProductAttributeId);
+                
+                if (productAttribute != null)
+                {
+                    audit.ProductAttributes = productAttribute;
+                }
+                else
+                {
+                    continue;
+                }
+
+            }
         }
     }
 }
