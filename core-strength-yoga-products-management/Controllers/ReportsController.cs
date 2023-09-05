@@ -1,5 +1,8 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
+using core_strength_yoga_products_management.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace core_strength_yoga_products_management.Controllers
 {
@@ -17,7 +20,8 @@ namespace core_strength_yoga_products_management.Controllers
         }
         public IActionResult Index()
         {
-            return RedirectToAction("Audit");
+            //return RedirectToAction("Audit");
+            return View();
         }
 
         [HttpGet("Reports/Audit")]
@@ -43,15 +47,60 @@ namespace core_strength_yoga_products_management.Controllers
         {
             var orders = await _orderService.GetOrders();
 
-            var basketItems = orders.SelectMany(o => o.Items);
+            var basketItems = await _orderService.GetBasketItems();
 
             var products = _productService.AllProducts;
             ViewData["products"] = products;
 
             ViewData["orders"] = orders;
 
-
             return View(basketItems);
+        }
+
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
+        public static List<SelectListItem> BuildSelectItemsGender(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Gender)))
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Value = item.ToString(),
+                    Text = item.ToString(),
+                    Selected = id == (int)item
+                });
+            }
+            return selectListItems;
+        }
+
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
+        public static List<SelectListItem> BuildSelectItemsSize(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Size)))
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Value = item.ToString(),
+                    Text = item.ToString(),
+                });
+            }
+            return selectListItems;
+        }
+
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
+        public static List<SelectListItem> BuildSelectItemsColour(int id)
+        {
+            var selectListItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(Colour)))
+            {
+                selectListItems.Add(new SelectListItem
+                {
+                    Value = item.ToString(),
+                    Text = item.ToString(),
+                });
+            }
+            return selectListItems;
         }
     }
 }

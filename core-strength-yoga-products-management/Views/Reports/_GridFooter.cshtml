@@ -1,0 +1,10 @@
+﻿@using NonFactors.Mvc.Grid;
+
+@model IGrid<core_strength_yoga_products_management.Models.BasketItem>
+
+<tr>
+    <td colspan="3"><b>Total Sales</b></td>
+    <td><b>€@(Model.Rows.Sum(row => row.Model.TotalCost))</b></td>
+    <td></td>
+    <td></td>
+</tr>

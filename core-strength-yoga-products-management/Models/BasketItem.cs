@@ -5,6 +5,7 @@ namespace core_strength_yoga_products_management.Models
     public class BasketItem
     {
         public int OrderId { get; set; }
+        public DateTime? OrderDate { get; set; }
         public int CustomerId { get; set; }
         public int ProductId { get; set; }
         [JsonIgnore]

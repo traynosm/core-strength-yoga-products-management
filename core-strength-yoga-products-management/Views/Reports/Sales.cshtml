@@ -1,12 +1,18 @@
 ﻿@using NonFactors.Mvc.Grid;
+@using core_strength_yoga_products_management.Controllers;
+
 @model IEnumerable<core_strength_yoga_products_management.Models.BasketItem>
 
-    @{
-        IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
+@{
+    IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
             throw new NullReferenceException($"Products cannot be null in Sales Report View");
-        
+
     IEnumerable<Order> orders = ViewData["orders"] as IEnumerable<Order> ??
         throw new NullReferenceException($"Orders cannot be null in Sales Report View");
+
+    var genderItems = ReportsController.BuildSelectItemsGender(0);
+    var sizeItems = ReportsController.BuildSelectItemsSize(0);
+    var colourItems = ReportsController.BuildSelectItemsColour(0);
 
     }
 
@@ -16,11 +22,16 @@
     .Grid(Model)
     .Build(columns =>
     {
-        columns.Add(model => model.ProductId).Titled("Product Id")
+        columns.Add(model => model.OrderId).Titled("Order Id")
             .Sortable(true)
             .Filterable(true);
 
-        columns.Add(model => model.ProductAttributeId).Titled("Product Attribute Id")
+        columns.Add(model => model.OrderDate).Titled("Order Date")
+            .Formatted("{0:dd-MM-yyyy HH:mm}")
+            .Sortable(true)
+            .Filterable(true);
+
+        columns.Add(model => model.ProductId).Titled("Product Id")
             .Sortable(true)
             .Filterable(true);
 
@@ -28,15 +39,29 @@
             .Sortable(false)
             .Filterable(false);
 
-        columns.Add().Titled("Name").RenderedAs(model => products.FirstOrDefault(p => p.Id == model.ProductId).Name);
+        columns.Add(model => model.TotalCost).Titled("Total Cost")
+            .RenderedAs(model => $"€{model.TotalCost}")
+            .Sortable(false)
+            .Filterable(false);
 
+        columns.Add().Titled("Name").RenderedAs(model => 
+            products.FirstOrDefault(p => p.Id == model.ProductId)!.Name);
 
+        columns.Add(model => model.Colour).Titled("Colour")
+                    .UsingFilterOptions(colourItems);
+
+        columns.Add(model => model.Gender).Titled("Gender")
+                   .UsingFilterOptions(genderItems); 
+
+        columns.Add(model => model.Size).Titled("Size")
+                    .UsingFilterOptions(sizeItems);         
     })
     .Pageable(pager =>
         {
             pager.PagesToDisplay = 5;
-            pager.RowsPerPage = 10;
+            pager.RowsPerPage = 300;
         })
     .Filterable()
     .Sortable()
-    .Empty("No Data Found"))
+    .Empty("No Data Found")
+    .UsingFooter("_GridFooter"))
