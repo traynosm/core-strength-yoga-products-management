@@ -1,13 +1,22 @@
 ﻿<div class="mb-3">
-    <button class="btn btn-primary">
+    <button class="btn btn-primary" onclick="spinner()">
         <a class="nav-link text-dark" asp-area="" asp-controller="Reports" asp-action="Audit">Stock Audit</a>
     </button>
+    <div class="loader">
+    </div>
 </div>
 <div>
-    <button class="btn btn-primary">
+    <button class="btn btn-primary" onclick="spinner()">
         <a class="nav-link text-dark" asp-area="" asp-controller="Reports" asp-action="Sales">Sales</a>
     </button>
-
+    <div class="loader">
+    </div>
 </div>
 
 
+
+<script type="text/javascript">
+    function spinner() {
+        document.getElementsByClassName("loader")[0].style.display = "block";
+    }
+</script>
