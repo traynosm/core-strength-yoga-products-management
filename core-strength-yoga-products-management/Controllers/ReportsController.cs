@@ -18,12 +18,14 @@ namespace core_strength_yoga_products_management.Controllers
             _orderService = orderService;
             _productService = productService;
         }
+
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
         public IActionResult Index()
         {
-            //return RedirectToAction("Audit");
             return View();
         }
 
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
         [HttpGet("Reports/Audit")]
         public async Task<IActionResult> Audit()
         {
@@ -32,6 +34,7 @@ namespace core_strength_yoga_products_management.Controllers
             return View(stockAudits!.OrderBy(a => a.ProductAttributeId));
         }
 
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
         [HttpGet("Reports/StockChanges/{productId}/{productAttributeId}")]
         public async Task<IActionResult> StockChanges(int productId, int productAttributeId)
         {
@@ -42,6 +45,8 @@ namespace core_strength_yoga_products_management.Controllers
 
             return View(stockAudits);
         }
+
+        [Authorize(Roles = "Admin, BusinessAnalyst")]
         [HttpGet("Reports/Sales")]
         public async Task<IActionResult> Sales()
         {
