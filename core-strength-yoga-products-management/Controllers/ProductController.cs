@@ -131,6 +131,12 @@ namespace core_strength_yoga_products_management.Controllers
         public async Task<IActionResult> AddOrUpdate(IFormCollection form)
         {
             var product = BuildProductFromFormCollection(form);
+
+            if (!product.ProductAttributes.Any())
+            {
+                return Problem("Invalid Product Attributes");
+            }
+
             var updatedProduct = new Product();
 
             try
@@ -163,27 +169,24 @@ namespace core_strength_yoga_products_management.Controllers
             {
                 return RedirectToAction("Edit", new { updatedProduct.Id });
             }
-
         }
 
         [Authorize(Roles = "Admin, ProductManager")]
         [HttpPost]
-        public async Task UploadImage(IFormFile image)
+        public async Task<IActionResult> UploadImage(IFormFile image)
         {
             string uploads = Path.Combine(_hostingEnvironment.WebRootPath, "images");
 
-                if (image.Length > 0)
+            if (image.Length > 0)
+            {
+                string filePath = Path.Combine(uploads, image.FileName);
+                using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    string filePath = Path.Combine(uploads, image.FileName);
-                    using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await image.CopyToAsync(fileStream);
-                    }
+                    await image.CopyToAsync(fileStream);
                 }
+            }
             
-
-            return;
-            //var body = await HttpContext.Request.Body.ReadAsync(new byte[] { });
+            return Ok("{}");
         }
 
         [Authorize(Roles = "Admin, ProductManager")]
@@ -287,21 +290,6 @@ namespace core_strength_yoga_products_management.Controllers
             }
             return selectListItems;
         }
-        //[Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
-        //public static List<SelectListItem> BuildSelectItemsRoles(int id)
-        //{
-        //    var selectListItems = new List<SelectListItem>();
-        //    foreach (var item in Enum.GetValues(typeof(Roles)))
-        //    {
-        //        selectListItems.Add(new SelectListItem
-        //        {
-        //            Value = ((int)item).ToString(),
-        //            Text = item.ToString(),
-        //            Selected = id == (int)item
-        //        });
-        //    }
-        //    return selectListItems;
-        //}
 
         private static List<Dictionary<string, object>> ExtractProductAttributes(IFormCollection form)
         {
@@ -351,6 +339,11 @@ namespace core_strength_yoga_products_management.Controllers
 
             var formProductAttributes = ExtractProductAttributes(form);
             var productAttributes = new List<ProductAttributes>();
+
+            if (!formProductAttributes.First().Keys.Any()) 
+            {
+                return product;
+            }
 
             foreach (var singleAttribute in formProductAttributes)
             {

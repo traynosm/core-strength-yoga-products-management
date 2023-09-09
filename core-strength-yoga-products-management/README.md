@@ -43,14 +43,35 @@ The should entail details on stock changes and sales.
 
 The above outlines the scope of this assignment. 
 
-Set-up and implementatio:
+Set-up and implementation:
 As stated previously, I had completed the back end API for a previous module.
-Scripts to run:
 
 
+Packages to add & Commands to run:
+Backend:
+dotnet add package Microsoft.AspNet.WebApi.Core
+dotnet add package Microsoft.AspNetCore. Wuthentication.JwtBearer
+dotnet add package Microsoft.ApsNetCore.Identity.EntityFrameworkCore
+dotnet add package Microsoft.AspNetCore.Identity.UI
+dotnet add package Microsoft.AspNetCore.Open.Api
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Swashbuckle.AspNetCore
+dotnet add package System.IdentityModel.Tokens.Jwt
+dotnet ef database update
 
-
-
+Frontend:
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore
+dotnet add package Microsoft.AspNetCore.Identity.UI
+dotnet add package Microsoft.Data.Sqlite.Core
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet add package NonFactors.Grid.Mvc6
+dotnet ef database update
 
 
 Within the start up of the API, data will be seeded and the there will be data generated for orders
