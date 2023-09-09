@@ -2,9 +2,14 @@
 {
     public class ProductCategory
     {
+        public ProductCategory() 
+        {
+            ProductCategoryName = string.Empty;
+        }
+
         public int Id { get; set; }
         public string ProductCategoryName { get; set; }
-        public string Description { get; set; }
-        public Image Image { get; set; }
+        public string? Description { get; set; }
+        public Image? Image { get; set; }
     }
 }

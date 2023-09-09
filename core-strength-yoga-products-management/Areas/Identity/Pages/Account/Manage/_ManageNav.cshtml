@@ -1,4 +1,4 @@
-﻿@inject SignInManager<core_strength_yoga_products_managementUser> SignInManager
+﻿@inject SignInManager<ManagementUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

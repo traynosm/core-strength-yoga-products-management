@@ -19,10 +19,10 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public ForgotPasswordModel(UserManager<core_strength_yoga_products_managementUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<ManagementUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;

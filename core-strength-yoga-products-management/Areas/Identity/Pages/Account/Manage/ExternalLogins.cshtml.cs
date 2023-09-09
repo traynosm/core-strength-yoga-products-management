@@ -17,14 +17,14 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
-        private readonly IUserStore<core_strength_yoga_products_managementUser> _userStore;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
+        private readonly IUserStore<ManagementUser> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
-            IUserStore<core_strength_yoga_products_managementUser> userStore)
+            UserManager<ManagementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
+            IUserStore<ManagementUser> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -70,7 +70,7 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
                 .ToList();
 
             string passwordHash = null;
-            if (_userStore is IUserPasswordStore<core_strength_yoga_products_managementUser> userPasswordStore)
+            if (_userStore is IUserPasswordStore<ManagementUser> userPasswordStore)
             {
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }

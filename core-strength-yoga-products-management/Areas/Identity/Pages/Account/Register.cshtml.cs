@@ -2,41 +2,42 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using core_strength_yoga_products_management.Areas.Identity.Data;
+using core_strength_yoga_products_management.Interfaces;
+using core_strength_yoga_products_management.Models;
+using core_strength_yoga_products_management.Models.Enums;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
-        private readonly IUserStore<core_strength_yoga_products_managementUser> _userStore;
-        private readonly IUserEmailStore<core_strength_yoga_products_managementUser> _emailStore;
+        private readonly SignInManager<ManagementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
+        private readonly IUserStore<ManagementUser> _userStore;
+        private readonly IUserEmailStore<ManagementUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILoginService _loginService;
 
         public RegisterModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
-            IUserStore<core_strength_yoga_products_managementUser> userStore,
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
+            UserManager<ManagementUser> userManager,
+            IUserStore<ManagementUser> userStore,
+            SignInManager<ManagementUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager, 
+            ILoginService loginService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +45,8 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
+            _loginService = loginService;
         }
 
         /// <summary>
@@ -90,6 +93,10 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
+            [Required]
+            [Display(Name = "Role")]
+            public string Role { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -100,9 +107,8 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
-        {
+        {   
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -113,41 +119,39 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
+                var role = Enum.Parse(typeof(Roles), Input.Role).ToString();
+                var roles = new List<string>() { role };
+                
+                var apiLoginResult = await _loginService.Register(new Models.User()
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    Username = Input.Email,
+                    Password = Input.Password,
+                    Email = Input.Email,
+                    Roles = roles
+                });
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                if (apiLoginResult.Succeeded)
+                {
+                    var signInResult = await _signInManager.PasswordSignInAsync(
+                        apiLoginResult.IdentityUser.UserName,
+                        Input.Password,
+                        false,
+                        lockoutOnFailure: false);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (signInResult.Succeeded) 
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        _logger.LogInformation("User logged in.");
+                        return RedirectToAction("Welcome", apiLoginResult);
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        return Page();
                     }
                 }
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    ModelState.AddModelError(string.Empty, apiLoginResult.Message);
                 }
             }
 
@@ -155,27 +159,27 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private core_strength_yoga_products_managementUser CreateUser()
+        private ManagementUser CreateUser()
         {
             try
             {
-                return Activator.CreateInstance<core_strength_yoga_products_managementUser>();
+                return Activator.CreateInstance<ManagementUser>();
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(core_strength_yoga_products_managementUser)}'. " +
-                    $"Ensure that '{nameof(core_strength_yoga_products_managementUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(ManagementUser)}'. " +
+                    $"Ensure that '{nameof(ManagementUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }
 
-        private IUserEmailStore<core_strength_yoga_products_managementUser> GetEmailStore()
+        private IUserEmailStore<ManagementUser> GetEmailStore()
         {
             if (!_userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<core_strength_yoga_products_managementUser>)_userStore;
+            return (IUserEmailStore<ManagementUser>)_userStore;
         }
     }
 }

@@ -17,9 +17,9 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
 
-        public ConfirmEmailModel(UserManager<core_strength_yoga_products_managementUser> userManager)
+        public ConfirmEmailModel(UserManager<ManagementUser> userManager)
         {
             _userManager = userManager;
         }

@@ -12,11 +12,11 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account.Ma
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
 
         public PersonalDataModel(
-            UserManager<core_strength_yoga_products_managementUser> userManager,
+            UserManager<ManagementUser> userManager,
             ILogger<PersonalDataModel> logger)
         {
             _userManager = userManager;

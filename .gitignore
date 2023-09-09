@@ -9,7 +9,6 @@
 *.user
 *.userosscache
 *.sln.docstates
-.vs
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -396,10 +395,8 @@ FodyWeavers.xsd
 *.msp
 
 # JetBrains Rider
-*.sln.iml
-.vs/core-strength-yoga-products-management/v17/.suo
-.vs/core-strength-yoga-products-management/v17/.futdcache.v2
-*.v2
-.vs/core-strength-yoga-products-management/DesignTimeBuild/.dtbcache.v2
-.vs/ProjectEvaluation/core-strength-yoga-products-management.metadata.v6.1
+*.db
+*.db-shm
+*.db-wal
+
 .vs/ProjectEvaluation/core-strength-yoga-products-management.projects.v6.1

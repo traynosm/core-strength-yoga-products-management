@@ -1,0 +1,67 @@
+﻿@model core_strength_yoga_products_management.Models.Image;
+@{
+    var path = Model.Path;
+    var alt = Model.Alt;
+    var imageName = Model.ImageName;
+}
+
+<div class="m-lg-5">
+    <input type="hidden" name="ImageId" id="ImageId" value="@Model.Id" />
+    <input type="hidden" name="Path" id="Path" value="@Model.Path"/>
+    <div>
+    @if (Model.Id == 0)
+    {
+        <img src="#" alt="" width="0" height="0" id="img-1"/>
+
+        <input id="myFile" type="file" name="@Model.ImageName" accept="image/*">
+
+            @Html.LabelFor(m => m.ImageName)
+            <input type="text" name="ImageName" id="ImageName" value="@Model.ImageName" />
+
+            @Html.LabelFor(m => m.Alt)
+            <input type="text" name="Alt" id="Alt" value="@Model.Alt" />
+    }
+    else
+    {
+        <img src="@Model.Path" alt="@Model.Alt" width="200" height="200" id="img-1" class="border-0" />
+           
+        @Html.LabelFor(m => m.ImageName)
+            <input type="text" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
+
+            @Html.LabelFor(m => m.Alt)
+            <input type="text" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
+    }
+
+    </div>
+
+
+
+
+
+
+</div>
+<script>
+    // Get imputs
+    let fileInput = document.getElementById('myFile');
+    let imageName = document.getElementById('ImageName');
+    let alt = document.getElementById('Alt');
+    let path = document.getElementById('Path');
+    let img = document.getElementById('img-1');
+
+    // Fires on file upload
+    fileInput.addEventListener('change', function (event) {
+
+        // Get file name
+        let fileName = fileInput.files[0].name;
+        let fn = fileName.replace(/\.[^/.]+$/, "")
+
+        // Update file name in span
+        imageName.setAttribute('value', fn);
+        alt.setAttribute('value', fn + ' alt');
+        path.setAttribute('value', '/images/' + fileName);
+
+        img.src = URL.createObjectURL(fileInput.files[0]);
+        img.setAttribute('width', 200);
+        img.setAttribute('height', 200);
+    });
+</script>

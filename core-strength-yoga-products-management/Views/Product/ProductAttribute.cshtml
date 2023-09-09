@@ -1,0 +1,91 @@
+﻿@using core_strength_yoga_products_management.Controllers;
+@model core_strength_yoga_products_management.Models.ProductAttributes;
+
+@{
+    var genderItems = ProductController.BuildSelectItemsGender((int)Model.Gender);
+    var sizeItems = ProductController.BuildSelectItemsSize((int)Model.Size);
+    var colourItems = ProductController.BuildSelectItemsColour((int)Model.Colour);
+}
+
+<div class="m-5">
+    <input type="hidden" name="ProductAttribute.Id-@Model.Id" id="ProductAttribute.Id-@Model.Id" value="@Model.Id" required/>
+    <div class="form-group">
+
+        @Html.Label("Gender")
+        @{
+            var disabledGender = Model.Id > 0 ? "disabled" : "";
+            var selectedGender = genderItems.FirstOrDefault(g => g.Selected);
+        }
+        @if (disabledGender == "disabled")
+        {
+            <input type="hidden" name="Gender-@Model.Id" id="Gender-@Model.Id" value="@selectedGender.Value">
+        }
+        <select name="Gender-@Model.Id" id="Gender-@Model.Id" @disabledGender >
+            @foreach(var gender in genderItems)
+            {
+                @if(gender.Selected)
+                {
+                    <option value="@gender.Value" selected>@gender.Text</option>
+                }
+                else
+                {
+                    <option value="@gender.Value">@gender.Text</option>
+                }
+            }
+        </select>
+
+        @Html.Label("Size")
+        @{
+            var disabledSize = Model.Id > 0 ? "disabled" : "";
+            var selectedSize = sizeItems.FirstOrDefault(g => g.Selected);
+
+        }
+        @if (disabledSize == "disabled")
+        {
+            <input type="hidden" name="Size-@Model.Id" id="Size-@Model.Id" value="@selectedSize.Value">
+        }
+        <select name="Size-@Model.Id" id="Size-@Model.Id" @disabledSize>
+            @foreach (var size in sizeItems)
+            {
+                @if (size.Selected)
+                {
+                    <option value="@size.Value" selected>@size.Text</option>
+                }
+                else
+                {
+                    <option value="@size.Value">@size.Text</option>
+                }
+            }
+        </select>
+
+        @Html.Label("Colour")
+        @{
+            var disabledColour = Model.Id > 0 ? "disabled" : "";
+            var selectedColour = colourItems.FirstOrDefault(g => g.Selected);
+
+        }
+        @if (disabledColour == "disabled")
+        {
+            <input type="hidden" name="Colour-@Model.Id" id="Colour-@Model.Id" value="@selectedColour.Value">
+        }
+        <select name="Colour-@Model.Id" id="Colour-@Model.Id" @disabledColour>
+            @foreach (var colour in colourItems)
+            {
+                @if (colour.Selected)
+                {
+                    <option value="@colour.Value" selected>@colour.Text</option>
+                }
+                else
+                {
+                    <option value="@colour.Value">@colour.Text</option>
+                }
+            }
+        </select>
+
+        @Html.Label("StockLevel")
+        <input type="number" name="StockLevel-@Model.Id" id="StockLevel-@Model.Id" value="@Model.StockLevel" , min="0" , step="1.0", required/>
+
+        @Html.Label("PriceAdjustment")
+        <input type="number" name="PriceAdjustment-@Model.Id" id="PriceAdjustment-@Model.Id" value="@Model.PriceAdjustment" , min="0" , step="0.01"/>
+    </div>
+</div>

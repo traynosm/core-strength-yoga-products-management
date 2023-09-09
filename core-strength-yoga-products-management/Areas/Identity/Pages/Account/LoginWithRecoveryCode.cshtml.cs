@@ -15,13 +15,13 @@ namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
-        private readonly UserManager<core_strength_yoga_products_managementUser> _userManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
+        private readonly UserManager<ManagementUser> _userManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
 
         public LoginWithRecoveryCodeModel(
-            SignInManager<core_strength_yoga_products_managementUser> signInManager,
-            UserManager<core_strength_yoga_products_managementUser> userManager,
+            SignInManager<ManagementUser> signInManager,
+            UserManager<ManagementUser> userManager,
             ILogger<LoginWithRecoveryCodeModel> logger)
         {
             _signInManager = signInManager;

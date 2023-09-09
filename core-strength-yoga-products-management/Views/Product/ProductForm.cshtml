@@ -1,0 +1,99 @@
+﻿@model core_strength_yoga_products_management.Models.Product
+
+@{
+    IEnumerable<SelectListItem> categories = ViewData["selectListItemsCategories"] as IEnumerable<SelectListItem>;
+    IEnumerable<SelectListItem> types = ViewData["selectListItemsTypes"] as IEnumerable<SelectListItem>;
+}
+
+@using (Html.BeginForm("AddOrUpdate", "Product", FormMethod.Post))
+{
+@*    <p id="upload-product-success">Your product has been added to the database</p>
+*@
+    @Html.HiddenFor(m => m.Id);
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new{ @class = "form-control", required = true, placeholder = "Enter A Product Name", minlength="3", maxlength="50" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProductCategory)
+        @Html.DropDownListFor(m => m.ProductCategory.Id, categories, new{@class = "form-control", required = true})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProductType)
+        @Html.DropDownListFor(m => m.ProductType.Id, types, new{@class = "form-control", required = true})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description)
+        @Html.TextBoxFor(m => m.Description, new{@class = "form-control", required = true})
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.FullPrice)
+        @Html.TextBoxFor(m => m.FullPrice, new{@class = "form-control", required = true, type="decimal", min="0.00"})
+    </div>
+@*        @Html.Label("FullPrice")
+        <div>
+            <input type="number" name="FullPrice-@Model.Id" id="FullPrice-@Model.Id" value="@Model.FullPrice" min="0" step="0.01" , required />
+        </div>
+*@    
+
+    <div id="image" class="m-5">
+        <h6>Image</h6>
+        @if (Model.Image != null)
+        {
+            @await Html.PartialAsync("Image", Model.Image)
+        }
+
+    </div>
+
+    <div id="product-attributes" class="m-5">
+        <h6>Product Attributes</h6>
+        @if (Model.ProductAttributes != null)
+        {
+            @foreach (var attr in Model.ProductAttributes)
+            {
+                @await Html.PartialAsync("ProductAttribute", attr)
+            }
+        }
+    </div>
+
+
+
+    <div>
+        <button onclick="productSuccess()"id="submitbtn" type="submit" class="btn btn-success align-content-center">Update <i class="fa-regular fa-floppy-disk"></i></button>
+    </div>
+}
+
+<button id="add-new-attr" class="btn btn-info border-2 border-dark m-3">Add New Attribute</button>
+<p id="upload-image-success">Your image has been uploaded</p>
+<div id="success">
+    <button onclick="imageSuccess()" id="upload-img" class="btn btn-info border-2 border-dark m-3" type="button">Upload Image</button>
+</div>
+@*<script>
+    const button = document.querySelector('button');
+    const successMessage = document.querySelector('#upload-image-success');
+    button.addEventListener('button', (e) => {
+        e.preventDefault();
+        successMessage.classList.add('show');
+        //setTimeout(() => form.submit(), 2000);
+    });
+</script>*@
+
+<script>
+    const successMessage = document.querySelector('#upload-image-success');
+
+    function imageSuccess() {
+        successMessage.classList.add('show')
+    }
+    const successMessage = document.querySelector('#upload-product-success');
+
+    function productSuccess() {
+        successMessage.classList.add('show')
+    }
+
+
+</script>
+
+
+
+
+

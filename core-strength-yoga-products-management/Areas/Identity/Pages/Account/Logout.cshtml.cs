@@ -10,24 +10,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using core_strength_yoga_products_management.Interfaces;
 
 namespace core_strength_yoga_products_management.Areas.Identity.Pages.Account
 {
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<core_strength_yoga_products_managementUser> _signInManager;
+        private readonly SignInManager<ManagementUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly ITokenService _tokenService;
 
-        public LogoutModel(SignInManager<core_strength_yoga_products_managementUser> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(SignInManager<ManagementUser> signInManager, ILogger<LogoutModel> logger, ITokenService tokenService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _tokenService = tokenService;
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+
             _logger.LogInformation("User logged out.");
+            _tokenService.RevokeToken();
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);

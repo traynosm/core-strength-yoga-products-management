@@ -11,7 +11,7 @@ using core_strength_yoga_products_management.Data;
 
 namespace core_strength_yoga_products_management.Migrations
 {
-    [DbContext(typeof(core_strength_yoga_products_managementContext))]
+    [DbContext(typeof(ManagementContext))]
     [Migration("20230809195551_initial")]
     partial class initial
     {

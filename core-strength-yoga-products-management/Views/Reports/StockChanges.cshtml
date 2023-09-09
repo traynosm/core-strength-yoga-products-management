@@ -1,0 +1,36 @@
+﻿
+@model IEnumerable<StockAudit>
+
+@{
+    var labels = new List<string>();
+    var values = new List<string>();
+    string chartName = Model != null && Model.Any() ? 
+       $"{Model.First().Product.Name} - {Model.First().ProductAttributes.ToString()}" : "";
+
+    foreach(var audit in Model.OrderBy(m => m.ChangedAt))
+    {
+        labels.Add(audit.ChangedAt.ToString("dd-MM-yyyy"));
+        values.Add(audit.NewStockLevel.ToString());
+    }
+}
+
+<h4>Stock Level Changes Over Time</h4>
+
+<canvas id="stockChart" width="300" height="150"></canvas>
+
+<script>
+    var ctx = document.getElementById('stockChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(labels)),
+            datasets: [{
+                label: @Html.Raw(Json.Serialize(@chartName)),
+                data: @Html.Raw(Json.Serialize(values)),
+                backgroundColor: 'rgb(10, 10, 10)',
+                borderColor: 'rgb(255, 99, 132)', 
+            }]
+        },
+        options: {}
+    });
+</script>
