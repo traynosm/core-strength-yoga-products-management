@@ -5,7 +5,7 @@
     var imageName = Model.ImageName;
 }
 
-<div class="m-lg-5">
+<div class="m-1">
     <input type="hidden" name="ImageId" id="ImageId" value="@Model.Id" />
     <input type="hidden" name="Path" id="Path" value="@Model.Path"/>
     <div>
@@ -13,33 +13,43 @@
     {
         <img src="#" alt="" width="0" height="0" id="img-1"/>
 
-        <input id="myFile" type="file" name="@Model.ImageName" accept="image/*">
+            <label for="myFile" class="btn btn-success mb-1">
+                <input id="myFile" type="file" name="@Model.ImageName" accept="image/*" class="btn btn-success mb-3">
+                Choose Image
+            </label>
 
-            @Html.LabelFor(m => m.ImageName)
-            <input type="text" name="ImageName" id="ImageName" value="@Model.ImageName" />
+            <p id="upload-image-success" class="">Your image has been uploaded!</p>
+            <button id="upload-img" class="btn btn-warning mb-1" type="button">Upload Image</button>
 
-            @Html.LabelFor(m => m.Alt)
-            <input type="text" name="Alt" id="Alt" value="@Model.Alt" />
+        <div class="form-group mb-3"> 
+            @*@Html.LabelFor(m => m.ImageName)*@
+            <input type="hidden" name="ImageName" id="ImageName" value="@Model.ImageName" width="200" />
+        </div>
+
+        <div class="form-group mb-3">
+            @*@Html.LabelFor(m => m.Alt)*@
+                <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" width="200" />
+        </div>
     }
     else
     {
         <img src="@Model.Path" alt="@Model.Alt" width="200" height="200" id="img-1" class="border-0" />
            
-        @Html.LabelFor(m => m.ImageName)
-            <input type="text" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
+            <div class="form-group mb-3">
+                @*@Html.LabelFor(m => m.ImageName)*@
+        <input type="hidden" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
+            </div>
 
-            @Html.LabelFor(m => m.Alt)
-            <input type="text" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
+                <div class="form-group mb-3">
+                    @*@Html.LabelFor(m => m.Alt)*@
+        <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
+            </div>
     }
 
     </div>
-
-
-
-
-
-
 </div>
+
+
 <script>
     // Get imputs
     let fileInput = document.getElementById('myFile');

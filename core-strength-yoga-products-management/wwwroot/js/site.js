@@ -4,12 +4,13 @@
 // Write your JavaScript code.
 
 $(document).ready(function () {
-    $("#add-new-attr").click(function () {
+    $("#add-new-attr").click(function (event) {
+        event.preventDefault();
         $.ajax({
             url: "/Product/ProductAttributePartialView",
             type: 'GET',
             success: function (res) {
-                let html = '<div class="bg-success">' + res + '</div>'
+                let html = '<div>' + res + '</div>'
                 $("#product-attributes").append(html);
             },
             error: function (err) {
@@ -30,31 +31,6 @@ $(document).ready(function () {
 
         console.log(JSON.stringify(i))
 
-        //const uploadFile = file => {
-        //    console.log("Uploading file...");
-        //    const API_ENDPOINT = "/Product/UploadImage";
-        //    const request = new XMLHttpRequest();
-        //    const formData = new FormData();
-
-        //    request.open("POST", API_ENDPOINT, true);
-        //    request.onreadystatechange = () => {
-        //        if (request.readyState === 4 && request.status === 200) {
-        //            console.log(request.responseText);
-        //        }
-        //    };
-        //    formData.append('image', file);
-        //    let formObj = new URLSearchParams(formData).toString();
-        //    console.log(formObj);
-        //    request.send(formObj);
-        //};
-
-        //uploadFile(fileInput.files[0]);
-
-        //fileInput.addEventListener("change", event => {
-        //    const files = event.target.files;
-        //    uploadFile(files[0]);
-        //});
-
         $.ajax({
             url: "/Product/UploadImage",
             type: 'POST',
@@ -63,12 +39,12 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function () {
-                alert('success')
+                $('#upload-image-success').show();
             },
-            //error: function (err) {
-            //    console.log(err);
-            //    alert('failed');
-            //}
+            error: function (err) {
+                console.log(err);
+                alert('Image Upload Failed. Contact your administrator.');
+            }
         });
     });
 
@@ -86,46 +62,4 @@ $(document).ready(function () {
         }
         return obj;
     }
-    //validate product Name
-    //$("namecheck").hide();
-    //let nameError = true;
-    //$("#c").keyup(function () {
-    //    validateName();
-    //});
-
-    //function validateName() {
-    //    let nameValue = $("#productnames").val();
-    //    if (nameValue.length == "") {
-    //        $("#namecheck").show();
-    //        nameError = false;
-    //        return false;
-    //    } else if (nameValue.length < 3 || nameValue.length > 50) {
-    //        $("#namecheck").show();
-    //        $("#namecheck").html("**length of productname must be between 3 and 50");
-    //        nameError = false;
-    //        return false;
-    //    } else {
-    //        $("#namecheck").hide();
-    //    }
-    //}
-    //$("#submitbtn").click(function (event) {
-    //    event.preventDefault()
-    //    validateName();
-    //    //validateEquipment();
-    //    //validateType();
-    //    //validateDescription();
-    //    //validatePrice();
-    //    //validateStockLevel();
-    //    //validatePriceAdjustment();
-    //    if (
-    //        nameError == true //&&
-    //        //passwordError == true &&
-    //        //confirmPasswordError == true &&
-    //        //emailError == true
-    //    ) {
-    //        return true;
-    //    } else {
-    //        return false;
-    //    }
-    //});
 });
