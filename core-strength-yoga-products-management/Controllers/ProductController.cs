@@ -14,10 +14,13 @@ namespace core_strength_yoga_products_management.Controllers
     {
         private readonly IProductService _productService;
         private IWebHostEnvironment _hostingEnvironment;
-        public ProductController(IProductService productService, IWebHostEnvironment hostingEnvironment)
+        private readonly ILoginService _loginService;
+        public ProductController(IProductService productService, IWebHostEnvironment hostingEnvironment,
+            ILoginService loginService)
         {
             _productService = productService;
             _hostingEnvironment = hostingEnvironment;
+            _loginService = loginService;
         }
 
         // GET: ProductController
@@ -25,6 +28,7 @@ namespace core_strength_yoga_products_management.Controllers
         [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public async Task<ActionResult> Index()
         {
+
             var categories = await _productService.GetCategories();
             ViewData["categories"] = categories;
 
@@ -32,6 +36,7 @@ namespace core_strength_yoga_products_management.Controllers
             ViewData["types"] = types;
 
             var products = await _productService.GetProducts();
+
             return View(products);
         }
 
@@ -282,6 +287,21 @@ namespace core_strength_yoga_products_management.Controllers
             }
             return selectListItems;
         }
+        //[Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
+        //public static List<SelectListItem> BuildSelectItemsRoles(int id)
+        //{
+        //    var selectListItems = new List<SelectListItem>();
+        //    foreach (var item in Enum.GetValues(typeof(Roles)))
+        //    {
+        //        selectListItems.Add(new SelectListItem
+        //        {
+        //            Value = ((int)item).ToString(),
+        //            Text = item.ToString(),
+        //            Selected = id == (int)item
+        //        });
+        //    }
+        //    return selectListItems;
+        //}
 
         private static List<Dictionary<string, object>> ExtractProductAttributes(IFormCollection form)
         {
