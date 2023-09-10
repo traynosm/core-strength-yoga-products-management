@@ -99,6 +99,9 @@ dotnet add package NonFactors.Grid.Mvc6
 dotnet ef database update
 
 
+API must be run prior to running the app
+
+
 Within the start up of the API, data will be seeded and the there will be data generated for orders
 and stock changes. 
 The data generation was necessary in order to have the reports functionality.
@@ -240,6 +243,13 @@ Then clicking the Upload Image button.
  It could have been utilised in the product management aspect of this project also.
  It was left as is to show the evolution of the project and it also give a clear distinction of which element
  of the app you are utilising as the styles are quite different.
+
+ Link to Repo:
+
+ API: https://github.com/traynosm/core-strength-yoga-products-api
+ 
+ App: https://github.com/traynosm/core-strength-yoga-products-management
+
 
  References:
  
