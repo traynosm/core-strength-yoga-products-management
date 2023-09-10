@@ -1,4 +1,6 @@
-# core-strength-yoga-products-management﻿**Module Title:** Advanced Programming
+# core-strength-yoga-products-management﻿
+
+**Module Title:** Advanced Programming
 
 **Module Code:** B8IT150
 
