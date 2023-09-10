@@ -51,30 +51,30 @@ namespace core_strength_yoga_products_management.Services
                 if (basketItem.Colour == null)
                 {
                     basketItem.Colour = _productService.AllProducts.FirstOrDefault(p =>
-                        p.Id == basketItem.ProductId)
-                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)
+                        p.Id == basketItem.ProductId)?
+                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)?
                         .Colour;
                 }
 
                 if (basketItem.Size == null)
                 {
                     basketItem.Size = _productService.AllProducts.FirstOrDefault(p =>
-                        p.Id == basketItem.ProductId)
-                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)
+                        p.Id == basketItem.ProductId)?
+                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)?
                         .Size;
                 }
 
                 if (basketItem.Gender == null)
                 {
                     basketItem.Gender = _productService.AllProducts.FirstOrDefault(p =>
-                        p.Id == basketItem.ProductId)
-                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)
+                        p.Id == basketItem.ProductId)?
+                        .ProductAttributes.FirstOrDefault(pa => pa.Id == basketItem.ProductAttributeId)?
                         .Gender;
                 }
 
                 if(basketItem.OrderDate == null)
                 {
-                    basketItem.OrderDate = orders.FirstOrDefault(o => o.Id == basketItem.OrderId).DateOfSale;
+                    basketItem.OrderDate = orders.FirstOrDefault(o => o.Id == basketItem.OrderId)?.DateOfSale;
                 }
             }
             return basketItems;

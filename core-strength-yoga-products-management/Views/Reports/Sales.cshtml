@@ -4,17 +4,16 @@
 @model IEnumerable<core_strength_yoga_products_management.Models.BasketItem>
 
 @{
-    IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
-            throw new NullReferenceException($"Products cannot be null in Sales Report View");
+    //IEnumerable<Product> products = ViewData["products"] as IEnumerable<Product> ??
+    //    throw new NullReferenceException($"Products cannot be null in Sales Report View");
 
-    IEnumerable<Order> orders = ViewData["orders"] as IEnumerable<Order> ??
-        throw new NullReferenceException($"Orders cannot be null in Sales Report View");
+    //IEnumerable<Order> orders = ViewData["orders"] as IEnumerable<Order> ??
+    //    throw new NullReferenceException($"Orders cannot be null in Sales Report View");
 
     var genderItems = ReportsController.BuildSelectItemsGender(0);
     var sizeItems = ReportsController.BuildSelectItemsSize(0);
     var colourItems = ReportsController.BuildSelectItemsColour(0);
-
-    }
+}
 
 <h4>Sales Report</h4>
 
@@ -44,8 +43,7 @@
             .Sortable(false)
             .Filterable(false);
 
-        columns.Add().Titled("Name").RenderedAs(model => 
-            products.FirstOrDefault(p => p.Id == model.ProductId)!.Name);
+        columns.Add(model => model.Product.Name).Titled("Name");
 
         columns.Add(model => model.Colour).Titled("Colour")
                     .UsingFilterOptions(colourItems);

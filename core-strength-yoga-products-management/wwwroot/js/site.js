@@ -38,12 +38,15 @@ $(document).ready(function () {
             dataType: 'json',
             processData: false,
             contentType: false,
+            beforeSend: function () {
+                $('#upload-image-success').hide();
+                $('#upload-image-failed').hide();
+            },
             success: function () {
                 $('#upload-image-success').show();
             },
             error: function (err) {
-                console.log(err);
-                alert('Image Upload Failed. Contact your administrator.');
+                $('#upload-image-failed').show();
             }
         });
     });

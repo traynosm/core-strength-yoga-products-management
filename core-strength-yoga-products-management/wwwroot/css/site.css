@@ -128,21 +128,23 @@ input:valid {
          border-bottom: 2px solid #009879;
      }
 
-#upload-image-success {
+#upload-image-success,
+#upload-image-failed {
     display: none;
 }
 
-    #upload-image-success.show {
-        display: block;
-    }
+#upload-image-success.show,
+#upload-image-failed.show {
+    display: block;
+}
 
 #upload-product-success {
     display: none;
 }
 
-    #upload-product-success.show {
-        display: block;
-    }
+#upload-product-success.show {
+    display: block;
+}
 
 /* https://stackoverflow.com/questions/572768/styling-an-input-type-file-button */  
 input[type="file"] {

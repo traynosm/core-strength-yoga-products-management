@@ -4,8 +4,8 @@ namespace core_strength_yoga_products_management.Interfaces
 {
     public interface ILoginService
     {
+        Task<bool> EnsureBackend();
         Task<LoginResult> Login(User user);
-
         Task<LoginResult> Register(User user);
     }
 }

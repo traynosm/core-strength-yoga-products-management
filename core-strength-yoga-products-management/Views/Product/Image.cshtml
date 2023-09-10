@@ -13,39 +13,35 @@
     {
         <img src="#" alt="" width="0" height="0" id="img-1"/>
 
-            <label for="myFile" class="btn btn-success mb-1">
-                <input id="myFile" type="file" name="@Model.ImageName" accept="image/*" class="btn btn-success mb-3">
-                Choose Image
-            </label>
+        <label for="myFile" class="btn btn-success mb-1">
+        <input id="myFile" type="file" name="@Model.ImageName" accept="image/*" class="btn btn-success mb-3" required>
+             Choose Image
+        </label>
 
-            <p id="upload-image-success" class="">Your image has been uploaded!</p>
-            <button id="upload-img" class="btn btn-warning mb-1" type="button">Upload Image</button>
+        <p id="upload-image-success" class="">Your image has been uploaded!</p>
+        <p id="upload-image-failed" class="">Your image was not uploaded. Please try again!</p>
+        <button id="upload-img" class="btn btn-warning mb-1" type="button">Upload Image</button>
 
         <div class="form-group mb-3"> 
-            @*@Html.LabelFor(m => m.ImageName)*@
             <input type="hidden" name="ImageName" id="ImageName" value="@Model.ImageName" width="200" />
         </div>
 
         <div class="form-group mb-3">
-            @*@Html.LabelFor(m => m.Alt)*@
-                <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" width="200" />
+            <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" width="200" />
         </div>
     }
     else
     {
         <img src="@Model.Path" alt="@Model.Alt" width="200" height="200" id="img-1" class="border-0" />
            
-            <div class="form-group mb-3">
-                @*@Html.LabelFor(m => m.ImageName)*@
-        <input type="hidden" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
-            </div>
+        <div class="form-group mb-3">  
+            <input type="hidden" name="ImageName" id="ImageName" value="@Model.ImageName" disabled />
+        </div>
 
-                <div class="form-group mb-3">
-                    @*@Html.LabelFor(m => m.Alt)*@
-        <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
-            </div>
+         <div class="form-group mb-3">
+            <input type="hidden" name="Alt" id="Alt" value="@Model.Alt" disabled required minlength="6" />
+         </div>
     }
-
     </div>
 </div>
 

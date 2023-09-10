@@ -29,6 +29,25 @@ namespace core_strength_yoga_products_management.Services
             _httpClient.BaseAddress = new Uri("http://localhost:5131");
         }
 
+        public async Task<bool> EnsureBackend()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("health");
+
+                _logger.LogInformation($"Backend is running = {response.IsSuccessStatusCode}");
+
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                _logger.LogCritical($"Backend is running = false. " +
+                    $"Please ensure core-strength-yoga-products-management-api is running!");
+
+                return false;
+            }
+        }
+
         public async Task<LoginResult> Login(User user)
         {
             var response = await PostAsync("login", user);

@@ -1,4 +1,5 @@
 ﻿using core_strength_yoga_products_management.Interfaces;
+using core_strength_yoga_products_management.Models;
 using core_strength_yoga_products_management.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,9 +56,20 @@ namespace core_strength_yoga_products_management.Controllers
             var basketItems = await _orderService.GetBasketItems();
 
             var products = _productService.AllProducts;
-            ViewData["products"] = products;
 
-            ViewData["orders"] = orders;
+            var toRemove = new List<BasketItem>();
+
+            foreach(var basketItem in basketItems) 
+            { 
+                var product = products.FirstOrDefault(p => p.Id == basketItem.ProductId);
+
+                if(product == null)
+                {
+                    toRemove.Add(basketItem);
+                }
+            }
+
+            basketItems = basketItems.Except(toRemove);
 
             return View(basketItems);
         }
