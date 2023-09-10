@@ -32,7 +32,7 @@ namespace core_strength_yoga_products_management.Services
                 return new List<StockAudit>();
             }
 
-            AttachProducts(stockAudits);
+            stockAudits = AttachProducts(stockAudits);
 
             return stockAudits;
         }
@@ -47,16 +47,19 @@ namespace core_strength_yoga_products_management.Services
                 return new List<StockAudit>();
             }
 
-            AttachProducts(stockAudits);
+            stockAudits = AttachProducts(stockAudits);
 
             return stockAudits;
         }
 
-        private void AttachProducts(IEnumerable<StockAudit> stockAudits)
+        private IEnumerable<StockAudit> AttachProducts(IEnumerable<StockAudit> stockAudits)
         {
+            var auditsToRemove = new List<StockAudit>();
+            
             foreach(var audit in stockAudits)
             {
-                var product = _productService.AllProducts.FirstOrDefault(p => p.Id == audit.ProductId);
+                var product = _productService.AllProducts.FirstOrDefault(p => 
+                    p.Id == audit.ProductId);
 
                 if(product != null)
                 {
@@ -64,10 +67,13 @@ namespace core_strength_yoga_products_management.Services
                 }
                 else
                 {
+                    auditsToRemove.Add(audit);
+
                     continue;
                 }
 
-                var productAttribute = product!.ProductAttributes.FirstOrDefault(p => p.Id == audit.ProductAttributeId);
+                var productAttribute = product!.ProductAttributes.FirstOrDefault(p => 
+                    p.Id == audit.ProductAttributeId);
                 
                 if (productAttribute != null)
                 {
@@ -75,10 +81,13 @@ namespace core_strength_yoga_products_management.Services
                 }
                 else
                 {
+                    auditsToRemove.Add(audit);
+
                     continue;
                 }
-
             }
+
+            return stockAudits.Except(auditsToRemove);
         }
     }
 }

@@ -5,6 +5,7 @@ using core_strength_yoga_products_management.Services;
 using core_strength_yoga_products_management.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 
 namespace core_strength_yoga_products_management
 {
@@ -65,7 +66,18 @@ namespace core_strength_yoga_products_management
                 options.SlidingExpiration = true;
             });
 
+
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            { 
+                var loginService = scope.ServiceProvider.GetRequiredService<ILoginService>();
+
+                if (!loginService.EnsureBackend().Result)
+                {         
+                    Environment.Exit(0);
+                }
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

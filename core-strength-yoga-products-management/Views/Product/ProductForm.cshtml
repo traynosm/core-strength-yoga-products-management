@@ -7,8 +7,6 @@
 
 @using (Html.BeginForm("AddOrUpdate", "Product", FormMethod.Post))
 {
-@*    <p id="upload-product-success">Your product has been added to the database</p>
-*@
     @Html.HiddenFor(m => m.Id);
     <div class="form-group mb-3">
         @Html.LabelFor(m => m.Name)

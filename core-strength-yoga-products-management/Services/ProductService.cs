@@ -83,6 +83,11 @@ namespace core_strength_yoga_products_management.Services
 
             if (!response.IsSuccessStatusCode)
             {
+                var failContent = await response.Content.ReadAsStringAsync();
+
+                dynamic? responseObj = JsonConvert.DeserializeObject<dynamic>(failContent);
+
+                throw new InvalidOperationException(responseObj?.Detail);
             }
 
             var updatedProductJson = await response.Content.ReadAsStringAsync();

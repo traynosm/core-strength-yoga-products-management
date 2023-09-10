@@ -24,7 +24,6 @@ namespace core_strength_yoga_products_management.Controllers
         }
 
         // GET: ProductController
-
         [Authorize(Roles = "Admin, ProductManager, ProductExecutive")]
         public async Task<ActionResult> Index()
         {
@@ -134,7 +133,7 @@ namespace core_strength_yoga_products_management.Controllers
 
             if (!product.ProductAttributes.Any())
             {
-                return Problem("Invalid Product Attributes");
+                return RedirectToAction("Add", product);
             }
 
             var updatedProduct = new Product();
@@ -150,9 +149,13 @@ namespace core_strength_yoga_products_management.Controllers
                     updatedProduct = await _productService.Update(product);
                 }
             }
+            catch(InvalidOperationException)
+            {
+                return RedirectToAction("Add", product);
+            }
             catch(InvalidTokenException)
             {
-                return Redirect("~/Identity/Account/Login");
+                return RedirectToPage("~/Identity/Account/Login");
             }
 
             var selectListItemsCategories = await BuildSelectItemsCategories(product.ProductCategory.Id);
@@ -163,7 +166,7 @@ namespace core_strength_yoga_products_management.Controllers
 
             if(updatedProduct!.Id == 0)
             {
-                return await Add(updatedProduct);
+                return RedirectToAction("Add", product); 
             }
             else
             {
@@ -177,16 +180,18 @@ namespace core_strength_yoga_products_management.Controllers
         {
             string uploads = Path.Combine(_hostingEnvironment.WebRootPath, "images");
 
-            if (image.Length > 0)
+            if (image != null && image.Length > 0)
             {
                 string filePath = Path.Combine(uploads, image.FileName);
                 using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await image.CopyToAsync(fileStream);
                 }
+
+                return Ok("{}");
             }
             
-            return Ok("{}");
+            return BadRequest();
         }
 
         [Authorize(Roles = "Admin, ProductManager")]
@@ -329,12 +334,17 @@ namespace core_strength_yoga_products_management.Controllers
             image.Path = form["Path"];
             image.Alt = form["Alt"];
 
-            product.Id = int.Parse(form["Id"]);
+            int.TryParse(form["Id"], out var productId);
+            int.TryParse(form["ProductCategory.Id"], out var productCategoryId);
+            int.TryParse(form["ProductType.Id"], out var productTypeId);
+            decimal.TryParse(form["FullPrice"], out var fullPrice);
+
+            product.Id = productId;
             product.Name = form["Name"];
-            product.ProductCategory.Id = int.Parse(form["ProductCategory.Id"]);
-            product.ProductType.Id = int.Parse(form["ProductType.Id"]);
+            product.ProductCategory.Id = productCategoryId;
+            product.ProductType.Id = productTypeId;
             product.Description = form["Description"];
-            product.FullPrice = decimal.Parse(form["FullPrice"]);
+            product.FullPrice = fullPrice;
             product.Image = image;          
 
             var formProductAttributes = ExtractProductAttributes(form);
